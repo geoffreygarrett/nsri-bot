@@ -1,8 +1,10 @@
-export const EquipmentStatus = {
-    OK: 'OK',
-    MISSING: 'MISSING',
-    PROPOSED: 'PROPOSED'
-};
+export const enum EquipmentStatus {
+    OK = 'OK',
+    MISSING = 'MISSING',
+    PROPOSED = 'PROPOSED',
+    USED = 'USED',
+    MAINTENANCE = 'MAINTENANCE',
+}
 
 
 export type IMarker = {
@@ -10,8 +12,8 @@ export type IMarker = {
     name: string;
     lng: number;
     lat: number;
-    status: keyof typeof EquipmentStatus;
-    last_checked?: Date;
+    status: EquipmentStatus;
+    last_checked?: string;
     description?: string;
 };
 

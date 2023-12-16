@@ -15,36 +15,36 @@ import {DocumentIcon, InformationCircleIcon} from "@heroicons/react/20/solid";
 import {redirect} from "next/navigation";
 
 
-const ItemInfoWindowContent = ({activeItem, sendMessage}) => {
+const ItemInfoWindowContent = ({activeItem, sendMessage}: { activeItem: any, sendMessage: any }) => {
 
     const qr_bgcolor = ''
     const qr_color = '0-0-80'
 
     const [status, setStatus] = useState(activeItem?.status);
-    const handleStatusChange = (newStatus) => {
-        setStatus(newStatus);
-        // Integrate with the status update logic
-    }
+    // const handleStatusChange = (newStatus) => {
+    //     setStatus(newStatus);
+    //     // Integrate with the status update logic
+    // }
 
     const [description, setDescription] = useState(activeItem?.description);
 
 
-    const wrappedHandleStatusChange = (newStatus) => {
-        handleStatusChange(newStatus);
-        const formattedMessage = `*Buoy ${activeItem?.name}*\nStatus Changed: ${newStatus}`;
-        sendMessage(formattedMessage, "+31646275883").then(r => console.log(r));
-    }
+    // const wrappedHandleStatusChange = (newStatus) => {
+    //     handleStatusChange(newStatus);
+    //     const formattedMessage = `*Buoy ${activeItem?.name}*\nStatus Changed: ${newStatus}`;
+    //     sendMessage(formattedMessage, "+31646275883").then(r => console.log(r));
+    // }
 
-    const StatusButton = ({targetStatus, color, children}) => (
-        <button
-            onClick={() => wrappedHandleStatusChange(targetStatus)}
-            className={`flex-1 flex items-center justify-center bg-${color}-400 hover:bg-${color}-500 text-white font-bold py-2 px-3 rounded ${
-                status === targetStatus ? `bg-${color}-700` : ''
-            }`}
-        >
-            {children}
-        </button>
-    );
+    // const StatusButton = ({targetStatus, color, children}) => (
+    //     <button
+    //         onClick={() => wrappedHandleStatusChange(targetStatus)}
+    //         className={`flex-1 flex items-center justify-center bg-${color}-400 hover:bg-${color}-500 text-white font-bold py-2 px-3 rounded ${
+    //             status === targetStatus ? `bg-${color}-700` : ''
+    //         }`}
+    //     >
+    //         {children}
+    //     </button>
+    // );
 
 
     const [showQRCode, setShowQRCode] = useState(false);

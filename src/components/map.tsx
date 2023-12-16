@@ -4,128 +4,6 @@
 
 import {EquipmentStatus, IExport, IMarker, DataType} from "@/components/types";
 import {test_region} from "@/components/test_region";
-
-// const data = {
-//     "type": "FeatureCollection",
-//     "features": [
-//         {
-//             "id": "KMD-0027",
-//             "name": "Kleinmond Lagoon Bridge",
-//             "status": "OK",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [19.0373592, -34.3408457]
-//         },
-//         {
-//             "id": "KMD-0025",
-//             "name": "Kleinmond Main Beach",
-//             "status": "OK",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [19.0376486, -34.3412517]
-//         },
-//         {
-//             "id": "KMD-0004",
-//             "name": "Preekboom",
-//             "status": "OK",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [19.0364928, -34.3412722]
-//         },
-//         {
-//             "id": "KMD-0003",
-//             "name": "Main Beach Lifesavers Station",
-//             "status": "OK",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [19.0368042, -34.3423213]
-//         },
-//         {
-//             "id": "KMD-0048",
-//             "name": "Lagoon Mouth Parking",
-//             "status": "OK",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [19.0369674, -34.3428559]
-//         },
-//         {
-//             "id": "KMD-0006",
-//             "name": "Drievis Tidal Pool",
-//             "status": "OK",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [19.034004517566, -34.3443622592103]
-//         },
-//         // For buoys with unclear or missing numbers, assigning new sequential IDs starting from 51
-//         {
-//             "id": "KMD-0051",
-//             "name": "Gustav Adolf Shipwreck Graves",
-//             "status": "OK",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [19.0014012, -34.3437285]
-//         },
-//         {
-//             "id": "KMD-0052",
-//             "name": "Palmiet Day Camp",
-//             "status": "OK",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [18.9948902, -34.3409659]
-//         },
-//         {
-//             "id": "KMD-0053",
-//             "name": "Island Palmiet Lagoon",
-//             "status": "OK",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [18.995224825279301, -34.342389896223501]
-//         },
-//         {
-//             "id": "KMD-0054",
-//             "name": "Old Boat Club Slipway Picnic Spot",
-//             "status": "OK",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [18.9915057, -34.3381631]
-//         },
-//         {
-//             "id": "KMD-0055",
-//             "name": "Proposed New Buoy",
-//             "status": "PROPOSED",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [19.0405717981542, -34.340878265100898]
-//         },
-//         {
-//             "id": "KMD-0056",
-//             "name": "Proposed New Buoy",
-//             "status": "PROPOSED",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [18.966248617419701, -34.360941955247199]
-//         },
-//         {
-//             "id": "KMD-0057",
-//             "name": "Proposed New Buoy",
-//             "status": "PROPOSED",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [18.990537355798999, -34.330284565111597]
-//         },
-//         // Keeping original IDs for buoys with different station numbers
-//         {
-//             "id": "17-23",
-//             "name": "Parking Area (Near Malherbe Stoel)",
-//             "status": "OK",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [19.0317733, -34.3444143]
-//         },
-//         {
-//             "id": "17-25",
-//             "name": "Missing Buoy",
-//             "status": "MISSING",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [18.891111, -34.373333]
-//         },
-//         {
-//             "id": "KMD-0058",
-//             "name": "Fisherhaven Public Slipway",
-//             "status": "REPLACE",
-//             "lastChecked": "2023-04-01T12:00:00Z",
-//             "coordinates": [19.124283, -34.3554749]
-//         }
-//     ]
-// };
-
-// impor data from json file
 import data from "@/placemarks.json";
 
 const imarkers: IMarker[] = data.map((feature, index) => ({
@@ -134,9 +12,9 @@ const imarkers: IMarker[] = data.map((feature, index) => ({
     lat: Number(feature.lat),
     lng: Number(feature.lng),
     alt: Number(feature.alt),
-    last_checked: "2023-04-01T12:00:00Z",
+    last_checked: "2021-08-01 12:00:00",
     address: feature.formatted_address,
-    status: feature.status,
+    status: feature.status as EquipmentStatus,
     type: DataType.MARKER,
     // image_src: "/test.jpeg"
 }));
@@ -166,13 +44,9 @@ const MapTypeId = {
 
 const DEFAULT_MAP_ID = MapTypeId.SATELLITE;
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
-import {DARK_STYLES, LIGHT_STYLES} from "@/components/map_styles";
-
 
 import Image from 'next/image';
 import export_kml from "@/components/export_kml";
-import PopoverMenu from "@/components/popover_menu";
-
 import ItemInfoWindowContent from "@/components/map_info_window";
 
 // import Image from 'next/image';
@@ -181,27 +55,6 @@ import ItemInfoWindowContent from "@/components/map_info_window";
 // import { EquipmentStatus, DataType } from '../path/to/constants'; // Adjust the import path
 
 
-const FloatingUIBar = ({position, onExportClick}: { position: string, onExportClick: () => void }) => {
-    const positionClasses = {
-        'top-left': 'top-0 left-0',
-        'top-center': 'top-0 left-1/2 transform -translate-x-1/2',
-        'top-right': 'top-0 right-0',
-        // Add more positioning options as needed
-    };
-
-    const selectedPosition = positionClasses[position] || 'top-0 left-0';
-
-    return (
-        <div className={`absolute ${selectedPosition} m-4`}>
-            <button
-                onClick={onExportClick}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-                Export to KML
-            </button>
-        </div>
-    );
-};
 
 
 const export_items = [
