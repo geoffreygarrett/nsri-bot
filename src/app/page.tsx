@@ -1,7 +1,7 @@
 import createWhatsappLink from "@/code/create_whatsapp_link";
 import LinksGrid from "@/components/links_grid";
 import Image from "next/image";
-import { Transition } from '@headlessui/react';
+import React from "react";
 
 
 // Project Description component
@@ -12,6 +12,7 @@ const ProjectDescription = ({children}: { children: React.ReactNode }) => (
     </section>
 );
 
+// Header component
 const Header = ({children}: { children: React.ReactNode }) => (
     <header className="flex flex-col items-center justify-center text-center">
         <h1 className="mb-4 text-6xl font-bold">
@@ -20,6 +21,7 @@ const Header = ({children}: { children: React.ReactNode }) => (
     </header>
 );
 
+// Home page component
 export default function Home() {
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-5 md:p-24">
@@ -33,7 +35,8 @@ export default function Home() {
                 </div>
 
                 {/* Gradient overlay */}
-                <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t dark:from-black from-white to-transparent"></div>
+                <div
+                    className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t dark:from-black from-white to-transparent"></div>
             </div>
 
             {/* Header */}
@@ -94,7 +97,7 @@ export default function Home() {
             <footer
                 className="mt-12 text-center text-sm lg:max-w-5xl lg:w-full opacity-30 border-t border-opacity-30 pt-5">
                 <p>
-                    Disclaimer: The NSRI Bot project is an independent effort and is not currently
+                    DISCLAIMER: The NSRI Bot project is an independent effort and is not currently
                     associated with the main head office of the National Sea Rescue Institute (NSRI) at this time.
                     This volunteer work is a part of the shore control group at Station 42. The information
                     and activities of this project are not officially endorsed by NSRI.

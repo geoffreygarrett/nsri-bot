@@ -1,7 +1,5 @@
 "use client";
 
-// import Size = google.maps.Size;
-
 import {EquipmentStatus, IExport, IMarker, DataType} from "@/components/types";
 import {test_region} from "@/components/test_region";
 import data from "@/placemarks.json";
@@ -53,8 +51,6 @@ import ItemInfoWindowContent from "@/components/map_info_window";
 // import { useState } from 'react';
 // import { MapPinIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 // import { EquipmentStatus, DataType } from '../path/to/constants'; // Adjust the import path
-
-
 
 
 const export_items = [
@@ -113,11 +109,33 @@ import {SendMessageType} from "@/server/types";
 // Main map component
 const SimpleMap = ({sendMessage}: { sendMessage: SendMessageType }) => {
     const defaultCenter = {lat: -34.3412517, lng: 19.0376486};
-    const defaultZoom = 11;
+    const defaultZoom = 15;
     const [mapTypeId, setMapTypeId] = useState(DEFAULT_MAP_ID);
     const [activeItem, setActiveItem] = useState<IMarker | null>(null);
     // const [zoom, setZoom] = useState(defaultZoom);
     const [map, setMap] = useState<google.maps.Map | null>(null);
+    const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null);
+
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            const watchId = navigator.geolocation.watchPosition(
+                position => {
+                    setUserLocation({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                },
+                () => {
+                    console.log("Location access denied.");
+                },
+                { enableHighAccuracy: true }
+            );
+
+            return () => navigator.geolocation.clearWatch(watchId);
+        }
+    }, []);
+
 
     const exportToKml = () => {
         // Call the function to create and download the KML file
@@ -137,17 +155,18 @@ const SimpleMap = ({sendMessage}: { sendMessage: SendMessageType }) => {
         setActiveItem(null);
     }, []);
 
+    const center = userLocation || defaultCenter;
+
 
     return (
         <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+
             <Map
                 zoom={defaultZoom}
                 mapTypeId={mapTypeId}
-                center={defaultCenter}
+                center={center}
                 disableDefaultUI={true}
                 mapId={'4hde5345723cdegs'}
-                // mapId={mapTypeId}
-                // styles={DARK_STYLES}
                 gestureHandling="greedy"
                 fullscreenControl={true}
                 fullscreenControlOptions={{position: ControlPosition.TOP_RIGHT}}
@@ -157,6 +176,17 @@ const SimpleMap = ({sendMessage}: { sendMessage: SendMessageType }) => {
                 style={{height: '100vh', width: '100%', position: 'relative'}}>
                 <Markers points={imarkers} handleMarkerClick={handleItemClick}/>
                 <Polyline/>
+                {userLocation && (
+                    <AdvancedMarker position={userLocation}>
+                        <Pin background={'rgb(255,0,0)'}
+                             borderColor={'#560101'}
+                             scale={1.1}>
+                            <div className="flex items-center justify-center">
+                                <div className="text-white text-xs font-semibold">You</div>
+                            </div>
+                        </Pin>
+                    </AdvancedMarker>
+                )}
                 {activeItem && (
                     <MemoInfoWindow
                         minWidth={200}

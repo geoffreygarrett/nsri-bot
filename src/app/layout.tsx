@@ -2,19 +2,22 @@ import type {Metadata} from 'next'
 import {Inter} from 'next/font/google'
 import './globals.css'
 import Link from "next/link";
+import React from "react";
 
 const inter = Inter({subsets: ['latin']})
 
 // Metadata configuration
-export const metadata = {
+export const metadata: Metadata = {
+    title: 'NSRI Bot',
+    description: 'Innovative solution for sea rescue operations.',
     icons: {
         icon: [
-            { url: '/android-chrome-192x192.png', sizes: '192x192', type: 'image/png' },
-            { url: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' }
+            {url: '/android-chrome-192x192.png', sizes: '192x192', type: 'image/png'},
+            {url: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png'}
         ],
         shortcut: ['/favicon.ico'],
         apple: [
-            { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+            {url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png'},
         ],
     },
     manifest: '/site.webmanifest',

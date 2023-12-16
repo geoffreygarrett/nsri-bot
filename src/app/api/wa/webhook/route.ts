@@ -5,49 +5,32 @@ import {SMSFormData} from '@/types';
 export const dynamic = 'force-dynamic' // defaults to auto
 
 
-
 const client = twilio(
     process.env.REACT_APP_TWILIO_ACCOUNT_SID,
     process.env.REACT_APP_TWILIO_AUTH_TOKEN);
 
 
-
-const parseFormData = (formData: FormData): SMSFormData => {
-    const smsData: Partial<SMSFormData> = {}; // Use Partial for intermediate state
-    formData.forEach((value, key) => {
-        if (key === 'SmsStatus') {
-            // Ensure the value is a valid SmsStatus before assigning
-            if (isSmsStatus(value.toString())) {
-                smsData[key as keyof SMSFormData] = value.toString() as SMSFormData['SmsStatus'];
-            } else {
-                throw new Error(`Invalid SmsStatus: ${value.toString()}`);
-            }
-        } else {
-            smsData[key as keyof SMSFormData] = value.toString();
-        }
-    });
-    return smsData as SMSFormData; // Cast to SMSFormData after assigning all properties
-};
-
-// Type guard for SmsStatus
-function isSmsStatus(value: string): value is SMSFormData['SmsStatus'] {
-    return ['received', 'queued', 'sent', 'failed', 'delivered', 'undelivered'].includes(value);
+// Function to validate Twilio request signature
+async function isValidTwilioRequest(req: NextRequest, params: Record<any, any>): Promise<boolean> {
+    const twilioSignature = req.headers.get('x-twilio-signature') as string;
+    const url = `${req.nextUrl.protocol}//${req.headers.get('host')}${req.nextUrl.pathname}`;
+    return twilio.validateRequest(process.env.REACT_APP_TWILIO_AUTH_TOKEN || "", twilioSignature, url, params);
 }
 
-
-const validateSMSFormData = (smsData: SMSFormData) => {
-    // Implement your validation logic here
-    // ...
-    // throw new Error('Invalid data');
-}
 
 export async function POST(request: NextRequest) {
     try {
-        const formData = await request.formData();
-        const smsData = parseFormData(formData);
-        validateSMSFormData(smsData);
+        // Parse form data
+        const params = Object.fromEntries(new URLSearchParams(await request.text()));
 
-        const smsDataFormatted = JSON.stringify(smsData, null, 2);
+        // Validate Twilio request signature
+        if (!await isValidTwilioRequest(request, params)) {
+            console.error('Invalid Twilio Signature');
+            return new NextResponse('Invalid Twilio Signature', {status: 401});
+        }
+
+        // Parse form data (Debugging)
+        const smsDataFormatted = JSON.stringify(params, null, 2);
         console.log("smsDataFormatted", smsDataFormatted);
         const responseMessage = await client.messages.create({
             body: `Received message: \n\`\`\`${smsDataFormatted}\`\`\``,
@@ -55,18 +38,12 @@ export async function POST(request: NextRequest) {
             to: 'whatsapp:+31646275883' // Replace with a dynamic recipient if needed
         });
 
-        console.log(`Message sent with SID: ${responseMessage.sid}`);
-        return new NextResponse('Message sent successfully', {status: 200});
-    } catch (error: unknown) {
-        // We need to narrow the error type
-        if (error instanceof Error) {
-            // Now TypeScript knows `error` is of type Error, so `message` is available
-            console.error(`Error occurred: ${error.message}`);
-            return new NextResponse(`Error: ${error.message}`, {status: 400});
-        } else {
-            // If it's not an Error instance, we can handle it as a generic error
-            console.error('An unknown error occurred.');
-            return new NextResponse('An unknown error occurred.', {status: 400});
-        }
+        // Send response
+        return new NextResponse('Webhook processed successfully', {status: 200});
+
+    } catch (error) { // Catch all errors
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Error in Twilio webhook handler:', errorMessage);
+        return new NextResponse(errorMessage, {status: 500});
     }
 }

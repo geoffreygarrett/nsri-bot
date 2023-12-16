@@ -25,9 +25,12 @@ const validateSMSFormData = (smsData: SMSFormData) => {
 }
 
 export async function POST(request: NextRequest) {
+
+
     try {
         const formData = await request.formData();
         const smsData = parseFormData(formData);
+
         validateSMSFormData(smsData);
 
         const smsDataFormatted = JSON.stringify(smsData, null, 2);

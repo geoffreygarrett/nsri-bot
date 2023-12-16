@@ -38,6 +38,7 @@ function validateRequestBody(body: QRRequestData) {
         throw new Error("Invalid 'size' value");
     }
 }
+
 type ImageFormat = 'png' | 'gif' | 'jpeg' | 'jpg' | 'svg' | 'eps';
 
 function getContentType(format: ImageFormat): string {
