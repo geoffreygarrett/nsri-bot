@@ -2,7 +2,7 @@
 const nextConfig = {
     images: {
         dangerouslyAllowSVG: true,
-        domains: ['localhost', '192.168.68.126']
+        domains: ['localhost', '192.168.68.126', 'https://www.nsri.bot/*'],
     },
 }
 
