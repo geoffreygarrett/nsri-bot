@@ -1,5 +1,6 @@
 import {NextRequest, NextResponse} from 'next/server'
 import twilio from 'twilio';
+import {SMSFormData} from '@/types';
 
 export const dynamic = 'force-dynamic' // defaults to auto
 
@@ -8,23 +9,6 @@ const client = twilio(
     process.env.REACT_APP_TWILIO_ACCOUNT_SID,
     process.env.REACT_APP_TWILIO_AUTH_TOKEN);
 
-
-type SMSFormData = {
-    SmsMessageSid: string;
-    NumMedia: string;
-    ProfileName: string;
-    SmsSid: string;
-    WaId: string;
-    SmsStatus: 'received' | 'queued' | 'sent' | 'failed' | 'delivered' | 'undelivered'; // Adjust as per your use case
-    Body: string;
-    To: string;
-    NumSegments: string;
-    ReferralNumMedia: string;
-    MessageSid: string;
-    AccountSid: string;
-    From: string;
-    ApiVersion: string;
-};
 
 const parseFormData = (formData: FormData): SMSFormData => {
     const smsData: Partial<SMSFormData> = {}; // Use Partial for intermediate state
@@ -56,8 +40,16 @@ export async function POST(request: NextRequest) {
 
         // console.log(`Message sent with SID: ${responseMessage.sid}`);
         return new NextResponse('Message sent successfully', {status: 200});
-    } catch (error) {
-        console.error(`Error occurred: ${error.message}`);
-        return new NextResponse(`Error: ${error.message}`, {status: 400});
+    } catch (error: unknown) {
+        // We need to narrow the error type
+        if (error instanceof Error) {
+            // Now TypeScript knows `error` is of type Error, so `message` is available
+            console.error(`Error occurred: ${error.message}`);
+            return new NextResponse(`Error: ${error.message}`, {status: 400});
+        } else {
+            // If it's not an Error instance, we can handle it as a generic error
+            console.error('An unknown error occurred.');
+            return new NextResponse('An unknown error occurred.', {status: 400});
+        }
     }
 }

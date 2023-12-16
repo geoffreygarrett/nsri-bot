@@ -84,7 +84,7 @@ export default function Home() {
                     },
                     {
                         href: "/lifebuoy",
-                        title: "Pink Lifebuoys",
+                        title: "Pink Rescue Buoys",
                         description: "Map of pink lifebuoys in the Overberg region."
                     }
                 ]
