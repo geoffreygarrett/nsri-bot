@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../nsri-app/.idea/nsri-app.iml" filepath="$PROJECT_DIR$/../nsri-app/.idea/nsri-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../nsri-bot/.idea/nsri-bot.iml" filepath="$PROJECT_DIR$/../nsri-bot/.idea/nsri-bot.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/nsri-refactor.iml" filepath="$PROJECT_DIR$/.idea/nsri-refactor.iml" />
+      <module fileurl="file://$USER_HOME$/Documents/Projects/nsri-rr/.idea/nsri-rr.iml" filepath="$USER_HOME$/Documents/Projects/nsri-rr/.idea/nsri-rr.iml" />
     </modules>
   </component>
 </project>

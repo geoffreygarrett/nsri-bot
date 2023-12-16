@@ -8,5 +8,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="nsri-rr" />
+    <orderEntry type="module" module-name="nsri-app" />
+    <orderEntry type="module" module-name="nsri-bot" />
   </component>
 </module>
