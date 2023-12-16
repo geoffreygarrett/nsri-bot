@@ -38,9 +38,10 @@ function validateRequestBody(body: QRRequestData) {
         throw new Error("Invalid 'size' value");
     }
 }
+type ImageFormat = 'png' | 'gif' | 'jpeg' | 'jpg' | 'svg' | 'eps';
 
-function getContentType(format: string): string {
-    const formatToContentType = {
+function getContentType(format: ImageFormat): string {
+    const formatToContentType: { [key in ImageFormat]: string } = {
         'png': 'image/png',
         'gif': 'image/gif',
         'jpeg': 'image/jpeg',
@@ -48,7 +49,8 @@ function getContentType(format: string): string {
         'svg': 'image/svg+xml',
         'eps': 'application/postscript'
     };
-    return formatToContentType[format] || 'image/png';
+
+    return formatToContentType[format];
 }
 
 export async function GET(request: NextRequest) {
@@ -83,8 +85,15 @@ export async function GET(request: NextRequest) {
             status: 200,
             headers: {'Content-Type': contentType}
         });
-    } catch (error) {
-        console.error(`Error in GET request: ${error.message}`);
-        return new NextResponse(`Error: ${error.message}`, {status: 400});
+    } catch (error: unknown) {
+        // Narrow down the type from `unknown` to an `Error` instance
+        if (error instanceof Error) {
+            console.error(`Error in GET request: ${error.message}`);
+            return new NextResponse(`Error: ${error.message}`, {status: 400});
+        } else {
+            // If it's not an `Error` instance, handle it as a generic error without specific properties
+            console.error('Error in GET request: An unknown error occurred.');
+            return new NextResponse('Error: An unknown error occurred.', {status: 400});
+        }
     }
 }
