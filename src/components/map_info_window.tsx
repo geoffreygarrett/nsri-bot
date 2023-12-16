@@ -13,6 +13,7 @@ import {getQRCodeURL} from "@/code/get_qr_code_url";
 import createWhatsappLink from "@/code/create_whatsapp_link";
 import {DocumentIcon, InformationCircleIcon} from "@heroicons/react/20/solid";
 import {redirect} from "next/navigation";
+import QRCode from "react-qr-code";
 
 
 const ItemInfoWindowContent = ({activeItem, sendMessage}: { activeItem: any, sendMessage: any }) => {
@@ -81,19 +82,13 @@ const ItemInfoWindowContent = ({activeItem, sendMessage}: { activeItem: any, sen
                 {showQRCode ? (
                     <div
                         className={`absolute top-0 left-0 w-full h-full bg-gray-100 flex items-center justify-center transition-opacity duration-500 ${showQRCode ? 'opacity-100' : 'opacity-0'}`}>
-                        <Image
-                            src={getQRCodeURL({
-                                data: createWhatsappLink(`\*[${activeItem?.id}]\*\n`),
-                                size: 100,
-                                margin: 0,
-                                format: 'svg',
-                                bgcolor: qr_bgcolor,
-                                color: qr_color,
-                            })}
-                            alt="QR Code"
-                            width={100}
-                            height={100}
-                            className="w-full h-auto object-cover"
+                        <QRCode
+                            size={256}
+                            // bgColor={qr_color}
+                            fgColor={"#282372"}
+                            style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                            value={createWhatsappLink(`\*[${activeItem?.id}]\*\n`)}
+                            viewBox={`0 0 256 256`}
                         />
                     </div>
                 ) : activeItem?.image_src ? (
