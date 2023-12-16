@@ -48,7 +48,7 @@ function process_marker(marker: IMarker): string {
         <description>${escape_xml(marker.description || '')}</description>
         <styleUrl>#custom_pink_pin</styleUrl>
         <Point>
-            <coordinates>${marker.coordinates[0]},${marker.coordinates[1]}</coordinates>
+            <coordinates>${marker.lng},${marker.lat},${marker.alt || 0}</coordinates>
         </Point>
     </Placemark>`;
 }

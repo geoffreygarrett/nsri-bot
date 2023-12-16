@@ -12,6 +12,7 @@ export type IMarker = {
     name: string;
     lng: number;
     lat: number;
+    alt?: number;
     status: EquipmentStatus;
     last_checked?: string;
     description?: string;
