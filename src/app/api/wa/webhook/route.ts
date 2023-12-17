@@ -63,6 +63,11 @@ export async function POST(request: NextRequest) {
                 .eq("id", id)
                 .returns<Tables<'rescue_buoy'>[]>();
 
+            if (error) {
+                console.error('Error in Twilio webhook handler:', error);
+                return new NextResponse('Error in Twilio webhook handler', {status: 500});
+            }
+
             if (!data || data.length === 0) {
                 console.error('No data found');
                 return new NextResponse('The provided ID was not found', {status: 404});
@@ -82,6 +87,10 @@ export async function POST(request: NextRequest) {
             // Return response
             return new NextResponse(messageBody, {status: 200});
 
+        } else {
+            // debug with all data and info of regex. Return with a response of 200, which goes to whatspp
+            console.error('No ID found');
+            return new NextResponse('The provided ID was not found', {status: 200});
         }
 
 
