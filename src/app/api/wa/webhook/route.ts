@@ -23,7 +23,7 @@ async function isValidTwilioRequest(req: NextRequest, params: Record<any, any>):
 }
 
 // Regex for the id, of format XX-XXXX
-const idRegex = /^[A-Z]{2}-\d{4}$/;
+const idRegex = /\d+-\d+$/;
 
 //
 import {createRouteHandlerClient} from '@supabase/auth-helpers-nextjs'
@@ -55,7 +55,14 @@ export async function POST(request: NextRequest) {
         // })
 
         // regex params["Body"] for id
-        const id = params["Body"].match(idRegex);
+        console.log("params", params);
+        console.log("params[Body]", params["Body"]);
+        const idRegex = /\*\[(\d+-\d+)\]\*/;
+        const inputString = params["Body"]; // Assuming this is your input string like '*[42-000]*'
+
+        const match = inputString.match(idRegex);
+        const id = match ? match[1] : null; // match[1] contains the first capturing group
+        console.log("id", id);
 
         if (id) {
             const {data, error} = await supabase.from(RESCUE_BUOY_TABLE_NAME)
