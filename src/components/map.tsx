@@ -4,7 +4,7 @@ import {EquipmentStatus, IExport, IMarker, DataType} from "@/components/types";
 import {test_region} from "@/components/test_region";
 // import data from "@/placemarks.json";
 import supabase from "@/supabase";
-
+import {use} from 'react';
 
 
 // const imarkers: IMarker[] = data.map((feature, index) => ({
@@ -43,7 +43,7 @@ const MapTypeId = {
     TERRAIN: 'terrain'
 };
 
-const DEFAULT_MAP_ID = MapTypeId.SATELLITE;
+const DEFAULT_MAP_ID = MapTypeId.HYBRID;
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
 import Image from 'next/image';
@@ -109,37 +109,53 @@ const Polyline = () => {
 }
 
 
-
 import {SendMessageType} from "@/server/types";
+import useUserLocation from "@/hooks/use_user_location";
+import MapUserLocation from "@/components/map_user_location";
+
+import {Tables} from "@/types/supabase";
+
 // Main map component
-const SimpleMap = ({sendMessage}: { sendMessage: SendMessageType }) => {
-    const defaultCenter = {lat: -34.3412517, lng: 19.0376486};
-    const defaultZoom = 15;
+const SimpleMap = ({data}: { data: Tables<'rescue_buoy'>[] }) => {
+
+    console.log("aaa",data[0]);
+    // const defaultCenter =
+    // const defaultZoom = 15;
+    const defaultZoom = 5;
     const [mapTypeId, setMapTypeId] = useState(DEFAULT_MAP_ID);
     const [activeItem, setActiveItem] = useState<IMarker | null>(null);
     // const [zoom, setZoom] = useState(defaultZoom);
     const [map, setMap] = useState<google.maps.Map | null>(null);
-    const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null);
+    const {userLocation, locationError} = useUserLocation();
+
+    // Default center of the map
+    const initialCenter = {lat: -34.12517, lng: 19.0376486}; // Adjust these coordinates as needed
+
+    // Default center of the map
+    const [defaultCenter, setDefaultCenter] = useState<google.maps.LatLngLiteral>(
+        userLocation || initialCenter
+    );
 
 
-    useEffect(() => {
-        if (navigator.geolocation) {
-            const watchId = navigator.geolocation.watchPosition(
-                position => {
-                    setUserLocation({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    });
-                },
-                () => {
-                    console.log("Location access denied.");
-                },
-                { enableHighAccuracy: true }
-            );
 
-            return () => navigator.geolocation.clearWatch(watchId);
-        }
-    }, []);
+
+    // useEffect(() => {
+    //     if (navigator.geolocation) {
+    //         const watchId = navigator.geolocation.watchPosition(
+    //             position => {
+    //                 setUserLocation({
+    //                     lat: position.coords.latitude,
+    //                     lng: position.coords.longitude
+    //                 });
+    //             },
+    //             () => {
+    //                 console.log("Location access denied.");
+    //             },
+    //             {enableHighAccuracy: true}
+    //         );
+    //         return () => navigator.geolocation.clearWatch(watchId);
+    //     }
+    // }, []);
 
 
     // const exportToKml = () => {
@@ -160,41 +176,59 @@ const SimpleMap = ({sendMessage}: { sendMessage: SendMessageType }) => {
         setActiveItem(null);
     }, []);
 
-    const center = userLocation || defaultCenter;
+    // const center = userLocation || defaultCenter;
 
-    const [markers, setMarkers] = useState<IMarker[]>([]);
+    // const [markers, setMarkers] = useState<IMarker[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchMarkers = async () => {
-            const { data } = await supabase.from('rescue_buoy').select();
-            console.log(data);
-            const formattedMarkers = data?.map(marker => ({
-                id: marker.id,
-                name: marker.name,
-                lat: Number(marker.lat),
-                lng: Number(marker.lng),
-                alt: Number(marker.alt),
-                last_checked: "2021-08-01 12:00:00",
-                address: marker.formatted_address,
-                status: marker.status as EquipmentStatus,
-                type: DataType.MARKER,
-                // image_src: "/test.jpeg"
-            }));
-            setMarkers(formattedMarkers as IMarker[]);
-            setIsLoading(false);
-        };
 
-        fetchMarkers().then(r => console.log(r));
-    }, []);
+    const markers = data?.map(marker => ({
+        id: marker.id,
+        name: marker.name,
+        lat: Number(marker.lat),
+        lng: Number(marker.lng),
+        alt: Number(marker.alt),
+        last_checked: "2021-08-01 12:00:00",
+        address: marker.formatted_address,
+        status: marker.status as EquipmentStatus,
+        type: DataType.MARKER,
+        // image_src: "/test.jpeg"
+    }));
+
+    console.log("markers",markers);
+    // setMarkers(formattedMarkers as IMarker[]);
+
+    // const data = use
+
+    // useEffect(() => {
+    //     const fetchMarkers = async () => {
+    //         // const {data} = await supabase.from('rescue_buoy').select();
+    //         console.log(data);
+    //         const formattedMarkers = data?.map(marker => ({
+    //             id: marker.id,
+    //             name: marker.name,
+    //             lat: Number(marker.lat),
+    //             lng: Number(marker.lng),
+    //             alt: Number(marker.alt),
+    //             last_checked: "2021-08-01 12:00:00",
+    //             address: marker.formatted_address,
+    //             status: marker.status as EquipmentStatus,
+    //             type: DataType.MARKER,
+    //             // image_src: "/test.jpeg"
+    //         }));
+    //         setMarkers(formattedMarkers as IMarker[]);
+    //         setIsLoading(false);
+    //     };
+    //
+    //     fetchMarkers().then(r => console.log(r));
+    // }, []);
 
     return (
         <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-
             <Map
                 zoom={defaultZoom}
                 mapTypeId={mapTypeId}
-                center={center}
+                center={defaultCenter}
                 disableDefaultUI={true}
                 mapId={'4hde5345723cdegs'}
                 gestureHandling="greedy"
@@ -204,21 +238,11 @@ const SimpleMap = ({sendMessage}: { sendMessage: SendMessageType }) => {
                 zoomControl={true}
                 // onZoomChanged={ev => setZoom(ev.detail.zoom)}
                 style={{height: '100vh', width: '100%', position: 'relative'}}>
-                {!isLoading && <Markers points={markers} handleMarkerClick={handleItemClick} />}
+                <Markers points={markers} handleMarkerClick={handleItemClick}/>
 
                 {/*<Markers points={imarkers} handleMarkerClick={handleItemClick}/>*/}
                 <Polyline/>
-                {userLocation && (
-                    <AdvancedMarker position={userLocation}>
-                        <Pin background={'rgb(255,0,0)'}
-                             borderColor={'#560101'}
-                             scale={1.1}>
-                            <div className="flex items-center justify-center">
-                                <div className="text-white text-xs font-semibold">You</div>
-                            </div>
-                        </Pin>
-                    </AdvancedMarker>
-                )}
+                <MapUserLocation userLocation={userLocation}/>
                 {activeItem && (
                     <MemoInfoWindow
                         minWidth={200}
@@ -226,7 +250,7 @@ const SimpleMap = ({sendMessage}: { sendMessage: SendMessageType }) => {
                         maxWidth={400}
                         pixelOffset={{width: 0, height: -40} as google.maps.Size}
                         onCloseClick={handleInfoWindowClose}>
-                        <ItemInfoWindowContent activeItem={activeItem} sendMessage={sendMessage}/>
+                        <ItemInfoWindowContent activeItem={activeItem}/>
                     </MemoInfoWindow>
                 )}
 

@@ -1,8 +1,13 @@
 import {NextRequest, NextResponse} from 'next/server'
+import {cookies} from 'next/headers'
+
 import twilio from 'twilio';
 import {SMSFormData} from '@/types';
 
 export const dynamic = 'force-dynamic' // defaults to auto
+
+
+const RESCUE_BUOY_TABLE_NAME = process.env.RESCUE_BUOY_TABLE_NAME || "rescue_buoy";
 
 
 const client = twilio(
@@ -17,8 +22,16 @@ async function isValidTwilioRequest(req: NextRequest, params: Record<any, any>):
     return twilio.validateRequest(process.env.REACT_APP_TWILIO_AUTH_TOKEN || "", twilioSignature, url, params);
 }
 
+// Regex for the id, of format XX-XXXX
+const idRegex = /^[A-Z]{2}-\d{4}$/;
+
+//
+import {createRouteHandlerClient} from '@supabase/auth-helpers-nextjs'
+import {Database, Tables} from "@/types/supabase";
+
 
 export async function POST(request: NextRequest) {
+
     try {
         // Parse form data
         const params = Object.fromEntries(new URLSearchParams(await request.text()));
@@ -29,6 +42,9 @@ export async function POST(request: NextRequest) {
             return new NextResponse('Invalid Twilio Signature', {status: 401});
         }
 
+        const supabase = createRouteHandlerClient<Database>({cookies})
+
+
         // // Parse form data (Debugging)
         // const smsDataFormatted = JSON.stringify(params, null, 2);
         // console.log("smsDataFormatted", smsDataFormatted);
@@ -38,15 +54,37 @@ export async function POST(request: NextRequest) {
         //     to: 'whatsapp:+31646275883' // Replace with a dynamic recipient if needed
         // })
 
-        // Message template
-        const message = `Update on *{{1}}* Rescue Buoy (ID: *{{2}}*) at *{{3}}*. Please report the current status:`;
-        const messageParams: Record<string, string> = {
-            1: "Palmiet Bridge",
-            2: "KLEI-0004",
-            3: "Palmietrivier, Kleinmond"
-        };
+        // regex params["Body"] for id
+        const id = params["Body"].match(idRegex);
 
-        const messageBody = message.replace(/\{\{(\d+)\}\}/g, (match, p1) => messageParams[p1]);
+        if (id) {
+            const {data, error} = await supabase.from(RESCUE_BUOY_TABLE_NAME)
+                .select("*")
+                .eq("id", id)
+                .returns<Tables<'rescue_buoy'>[]>();
+
+            if (!data || data.length === 0) {
+                console.error('No data found');
+                return new NextResponse('The provided ID was not found', {status: 404});
+            }
+
+            // Message template
+            const message = `Update on *{{1}}* Rescue Buoy (ID: *{{2}}*) at *{{3}}*. Please report the current status:`;
+            const messageParams: Record<string, string> = {
+                1: data[0].name,
+                2: data[0].id,
+                3: data[0].formatted_address
+            };
+
+            // Replace placeholders in message template
+            const messageBody = message.replace(/\{\{(\d+)\}\}/g, (match, p1) => messageParams[p1]);
+
+            // Return response
+            return new NextResponse(messageBody, {status: 200});
+
+        }
+
+
         // await client.messages.create({
         //     body: messageBody,
         //     from: `whatsapp:${process.env.NEXT_PUBLIC_TWILIO_PHONE_NUMBER}`,
@@ -54,7 +92,7 @@ export async function POST(request: NextRequest) {
         // })
 
         // Send response
-        return new NextResponse(messageBody, {status: 200});
+        // return new NextResponse(messageBody, {status: 200});
 
     } catch (error) { // Catch all errors
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';

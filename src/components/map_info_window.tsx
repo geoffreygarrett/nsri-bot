@@ -15,7 +15,7 @@ import {redirect} from "next/navigation";
 import QRCode from "react-qr-code";
 
 
-const ItemInfoWindowContent = ({activeItem, sendMessage}: { activeItem: any, sendMessage: any }) => {
+const ItemInfoWindowContent = ({activeItem}: { activeItem: any }) => {
     const [status, setStatus] = useState(activeItem?.status);
     const [description, setDescription] = useState(activeItem?.description);
     const [showQRCode, setShowQRCode] = useState(false);
