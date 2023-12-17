@@ -36,7 +36,22 @@ export async function POST(request: NextRequest) {
             body: `Received message: \n\`\`\`${smsDataFormatted}\`\`\``,
             from: `whatsapp:${process.env.NEXT_PUBLIC_TWILIO_PHONE_NUMBER}`,
             to: 'whatsapp:+31646275883' // Replace with a dynamic recipient if needed
-        });
+        })
+
+
+        // Message template
+        const message = `Update on *{{1}}* Rescue Buoy (ID: *{{2}}*) at *{{3}}*. Please report the current status:`;
+        const messageParams: Record<string, string> = {
+            1: "Palmiet Bridge",
+            2: "KLEI-0004",
+            3: "Palmietrivier, Kleinmond"
+        };
+        const messageBody = message.replace(/\{\{(\d+)\}\}/g, (match, p1) => messageParams[p1]);
+        await client.messages.create({
+            body: messageBody,
+            from: `whatsapp:${process.env.NEXT_PUBLIC_TWILIO_PHONE_NUMBER}`,
+            to: 'whatsapp:+31646275883' // Replace with a dynamic recipient if needed
+        })
 
         // Send response
         return new NextResponse('Webhook processed successfully', {status: 200});
