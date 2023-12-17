@@ -2,20 +2,23 @@
 
 import {EquipmentStatus, IExport, IMarker, DataType} from "@/components/types";
 import {test_region} from "@/components/test_region";
-import data from "@/placemarks.json";
+// import data from "@/placemarks.json";
+import supabase from "@/supabase";
 
-const imarkers: IMarker[] = data.map((feature, index) => ({
-    id: feature.id,
-    name: feature.name,
-    lat: Number(feature.lat),
-    lng: Number(feature.lng),
-    alt: Number(feature.alt),
-    last_checked: "2021-08-01 12:00:00",
-    address: feature.formatted_address,
-    status: feature.status as EquipmentStatus,
-    type: DataType.MARKER,
-    // image_src: "/test.jpeg"
-}));
+
+
+// const imarkers: IMarker[] = data.map((feature, index) => ({
+//     id: feature.id,
+//     name: feature.name,
+//     lat: Number(feature.lat),
+//     lng: Number(feature.lng),
+//     alt: Number(feature.alt),
+//     last_checked: "2021-08-01 12:00:00",
+//     address: feature.formatted_address,
+//     status: feature.status as EquipmentStatus,
+//     type: DataType.MARKER,
+//     // image_src: "/test.jpeg"
+// }));
 
 
 import React, {useCallback, useEffect, useRef, useState} from "react";
@@ -105,6 +108,8 @@ const Polyline = () => {
     return <></>
 }
 
+
+
 import {SendMessageType} from "@/server/types";
 // Main map component
 const SimpleMap = ({sendMessage}: { sendMessage: SendMessageType }) => {
@@ -137,10 +142,10 @@ const SimpleMap = ({sendMessage}: { sendMessage: SendMessageType }) => {
     }, []);
 
 
-    const exportToKml = () => {
-        // Call the function to create and download the KML file
-        export_kml(imarkers as IExport[]); // replace exportKmlFunction with the actual function name
-    };
+    // const exportToKml = () => {
+    //     // Call the function to create and download the KML file
+    //     export_kml(imarkers as IExport[]); // replace exportKmlFunction with the actual function name
+    // };
 
     const handleItemClick = useCallback((item: IMarker) => {
         if (!item) return;
@@ -157,6 +162,31 @@ const SimpleMap = ({sendMessage}: { sendMessage: SendMessageType }) => {
 
     const center = userLocation || defaultCenter;
 
+    const [markers, setMarkers] = useState<IMarker[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchMarkers = async () => {
+            const { data } = await supabase.from('rescue_buoy').select();
+            console.log(data);
+            const formattedMarkers = data?.map(marker => ({
+                id: marker.id,
+                name: marker.name,
+                lat: Number(marker.lat),
+                lng: Number(marker.lng),
+                alt: Number(marker.alt),
+                last_checked: "2021-08-01 12:00:00",
+                address: marker.formatted_address,
+                status: marker.status as EquipmentStatus,
+                type: DataType.MARKER,
+                // image_src: "/test.jpeg"
+            }));
+            setMarkers(formattedMarkers as IMarker[]);
+            setIsLoading(false);
+        };
+
+        fetchMarkers().then(r => console.log(r));
+    }, []);
 
     return (
         <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
@@ -174,7 +204,9 @@ const SimpleMap = ({sendMessage}: { sendMessage: SendMessageType }) => {
                 zoomControl={true}
                 // onZoomChanged={ev => setZoom(ev.detail.zoom)}
                 style={{height: '100vh', width: '100%', position: 'relative'}}>
-                <Markers points={imarkers} handleMarkerClick={handleItemClick}/>
+                {!isLoading && <Markers points={markers} handleMarkerClick={handleItemClick} />}
+
+                {/*<Markers points={imarkers} handleMarkerClick={handleItemClick}/>*/}
                 <Polyline/>
                 {userLocation && (
                     <AdvancedMarker position={userLocation}>
@@ -210,7 +242,7 @@ type Props = { points: IMarker[], handleMarkerClick: (feature: any) => void };
 const Markers = ({points, handleMarkerClick}: Props) => {
     return (
         <>
-            {points.map(point => (
+            {points?.map(point => (
                 <AdvancedMarker
                     position={point}
                     key={point.id}
