@@ -86,7 +86,7 @@ export default function Home() {
                         description: "Contact me on WhatsApp to discuss this project."
                     },
                     {
-                        href: "/lifebuoy",
+                        href: "/prb",
                         title: "Pink Rescue Buoys",
                         description: "Map of pink lifebuoys in the Overberg region."
                     }
