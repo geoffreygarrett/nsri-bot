@@ -29,15 +29,14 @@ export async function POST(request: NextRequest) {
             return new NextResponse('Invalid Twilio Signature', {status: 401});
         }
 
-        // Parse form data (Debugging)
-        const smsDataFormatted = JSON.stringify(params, null, 2);
-        console.log("smsDataFormatted", smsDataFormatted);
-        const responseMessage = await client.messages.create({
-            body: `Received message: \n\`\`\`${smsDataFormatted}\`\`\``,
-            from: `whatsapp:${process.env.NEXT_PUBLIC_TWILIO_PHONE_NUMBER}`,
-            to: 'whatsapp:+31646275883' // Replace with a dynamic recipient if needed
-        })
-
+        // // Parse form data (Debugging)
+        // const smsDataFormatted = JSON.stringify(params, null, 2);
+        // console.log("smsDataFormatted", smsDataFormatted);
+        // const responseMessage = await client.messages.create({
+        //     body: `Received message: \n\`\`\`${smsDataFormatted}\`\`\``,
+        //     from: `whatsapp:${process.env.NEXT_PUBLIC_TWILIO_PHONE_NUMBER}`,
+        //     to: 'whatsapp:+31646275883' // Replace with a dynamic recipient if needed
+        // })
 
         // Message template
         const message = `Update on *{{1}}* Rescue Buoy (ID: *{{2}}*) at *{{3}}*. Please report the current status:`;
@@ -46,15 +45,16 @@ export async function POST(request: NextRequest) {
             2: "KLEI-0004",
             3: "Palmietrivier, Kleinmond"
         };
+
         const messageBody = message.replace(/\{\{(\d+)\}\}/g, (match, p1) => messageParams[p1]);
-        await client.messages.create({
-            body: messageBody,
-            from: `whatsapp:${process.env.NEXT_PUBLIC_TWILIO_PHONE_NUMBER}`,
-            to: 'whatsapp:+31646275883' // Replace with a dynamic recipient if needed
-        })
+        // await client.messages.create({
+        //     body: messageBody,
+        //     from: `whatsapp:${process.env.NEXT_PUBLIC_TWILIO_PHONE_NUMBER}`,
+        //     to: 'whatsapp:+31646275883' // Replace with a dynamic recipient if needed
+        // })
 
         // Send response
-        return new NextResponse('Webhook processed successfully', {status: 200});
+        return new NextResponse(messageBody, {status: 200});
 
     } catch (error) { // Catch all errors
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
