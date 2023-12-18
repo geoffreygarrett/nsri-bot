@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         validateSMSFormData(smsData);
 
         const smsDataFormatted = JSON.stringify(smsData, null, 2);
-        console.log("smsDataFormatted (status)", smsDataFormatted);
+        // console.log("smsDataFormatted (status)", smsDataFormatted);
         // const responseMessage = await client.messages.create({
         //     body: `Received message: \n\`\`\`${smsDataFormatted}\`\`\``,
         //     from: `whatsapp:${process.env.NEXT_PUBLIC_TWILIO_PHONE_NUMBER}`,
