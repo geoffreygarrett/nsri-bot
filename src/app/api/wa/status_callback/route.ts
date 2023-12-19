@@ -1,48 +1,77 @@
 import {NextRequest, NextResponse} from 'next/server'
 import twilio from 'twilio';
 import {SMSFormData} from '@/types';
+import {isValidTwilioRequest, parseTwilioRequest} from "@/code/twilio";
+import {createRouteHandlerClient} from "@supabase/auth-helpers-nextjs";
+import {Database} from "@/types/supabase";
+import {cookies} from "next/headers";
+import {convertKeysToSnakeCase} from "@/code/utils";
 
-export const dynamic = 'force-dynamic' // defaults to auto
+// export const dynamic = 'force-dynamic' // defaults to auto
 
 
 const client = twilio(
     process.env.REACT_APP_TWILIO_ACCOUNT_SID,
     process.env.REACT_APP_TWILIO_AUTH_TOKEN);
 
-
-const parseFormData = (formData: FormData): SMSFormData => {
-    const smsData: Partial<SMSFormData> = {}; // Use Partial for intermediate state
-    formData.forEach((value, key) => {
-        smsData[key as keyof SMSFormData] = value.toString();
-    });
-    return smsData as SMSFormData; // Cast to SMSFormData after assigning all properties
-};
-
-const validateSMSFormData = (smsData: SMSFormData) => {
-    // Implement your validation logic here
-    // ...
-    // throw new Error('Invalid data');
-}
+const RESCUE_BUOYS = process.env.RESCUE_BUOY_TABLE_NAME || `rescue_buoys`;
+const MESSAGES_STATUS_UPDATES = process.env.MESSAGES_STATUS_UPDATES_TABLE_NAME || `messages_status_updates`;
+const MESSAGES_SENT = process.env.MESSAGES_SENT_TABLE_NAME || `messages_sent`;
 
 export async function POST(request: NextRequest) {
 
 
     try {
-        const formData = await request.formData();
-        const smsData = parseFormData(formData);
+        // Parse form data
+        const twilioParams = await parseTwilioRequest(request);
 
-        validateSMSFormData(smsData);
+        // Validate Twilio request signature
+        if (!await isValidTwilioRequest(request, twilioParams)) {
+            console.error('Invalid Twilio Signature');
+            return new NextResponse('Invalid Twilio Signature', {status: 401});
+        }
 
-        const smsDataFormatted = JSON.stringify(smsData, null, 2);
-        // console.log("smsDataFormatted (status)", smsDataFormatted);
-        // const responseMessage = await client.messages.create({
-        //     body: `Received message: \n\`\`\`${smsDataFormatted}\`\`\``,
-        //     from: `whatsapp:${process.env.NEXT_PUBLIC_TWILIO_PHONE_NUMBER}`,
-        //     to: 'whatsapp:+31646275883' // Replace with a dynamic recipient if needed
-        // });
+        // Create Supabase client
+        const supabase = createRouteHandlerClient<Database>({cookies})
+
+        // Insert into 'received_messages' table
+        const params = convertKeysToSnakeCase(twilioParams); // Convert keys to snake case
+
+        let update_keys = {};
+        if (params.message_status === 'sent') {
+            update_keys = {
+                message_status: params.message_status,
+                sent_at: new Date()
+            }
+        } else if (params.message_status === 'delivered') {
+            update_keys = {
+                message_status: params.message_status,
+                delivered_at: new Date()
+            }
+        } else if (params.message_status === 'read') {
+            update_keys = {
+                message_status: params.message_status,
+                read_at: new Date()
+            }
+        }
+
+        const {error} = await supabase
+            .from(MESSAGES_SENT)
+            .update(update_keys)
+            .eq(`sid`, params.message_sid)
+
+        if (error) {
+            console.error('Supabase error:', error);
+            return new NextResponse(`Supabase error: ${error.message}`, {status: 500});
+        }
+
+        const {data: data2, error: error2} = await supabase
+            .from(MESSAGES_STATUS_UPDATES)
+            .insert([params])
+
 
         // console.log(`Message sent with SID: ${responseMessage.sid}`);
-        return new NextResponse('Message sent successfully', {status: 200});
+        return new NextResponse('Message status update received successfully', {status: 200});
     } catch (error: unknown) {
         // We need to narrow the error type
         if (error instanceof Error) {

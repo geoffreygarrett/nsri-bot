@@ -25,6 +25,11 @@ export interface LocationMessage extends BaseMessage {
     longitude: string;
 }
 
+export interface ButtonMessage extends BaseMessage {
+    button_text: string;
+    button_payload: string;
+}
+
 export function isMediaMessage(message: BaseMessage): message is MediaMessage {
     return 'media_content_type0' in message && 'media_url0' in message;
 }
