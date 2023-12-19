@@ -20,7 +20,6 @@ class SendAndWaitForResponse {
 
     supabase: SupabaseClient<Database>;
     client: twilio.Twilio;
-    template: string;
     message_params: Record<string, string>;
 
     // variables:
