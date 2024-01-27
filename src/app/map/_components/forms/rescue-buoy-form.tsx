@@ -10,7 +10,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {z} from "zod";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {BuoyStatus} from "@prisma/client";
+import {BuoyStatus} from "@/types/temp";
 import Image from "next/image";
 import {CameraIcon} from "@heroicons/react/24/outline";
 import {Separator} from "@/components/ui/separator";
