@@ -11,6 +11,7 @@
     "profile-build": "next build --profile",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "prisma generate",
     "supbase_all_types": "npx supabase gen types typescript --project-id qlbsphcwgftiwfswxgrs --schema public --schema auth > src/types/supabase.ts\n",
     "supbase_types": "npx supabase gen types typescript --project-id qlbsphcwgftiwfswxgrs --schema public > src/types/supabase.ts\n\nsed -i'' -e '1i \\\nimport {Point, Polygon} from \"geojson\"; \\\n' src/types/supabase.ts\n\nsed -i'' -e 's/location: unknown/location: Point/g' src/types/supabase.ts\nsed -i'' -e 's/location?: unknown/location?: Point/g' src/types/supabase.ts\nsed -i'' -e 's/service_area?: unknown | null/service_area?: Polygon | null/g' src/types/supabase.ts\nsed -i'' -e 's/service_area: unknown | null/service_area: Polygon | null/g' src/types/supabase.ts\n"
   },
