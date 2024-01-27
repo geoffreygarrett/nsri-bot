@@ -6,23 +6,23 @@ import React from "react";
 import {useMap} from "@vis.gl/react-google-maps";
 import {cn} from "@/lib/utils";
 import {toast} from "sonner";
-import {useLocation} from '../../../../../../dev/location-provider';
+import { useGeolocation } from "@uidotdev/usehooks";
 
 const RecenterControl = ({className}: { className?: string }) => {
     const map = useMap();
-    const {userLocation, loading, error} = useLocation(); // Use the location context
+    const state = useGeolocation();
 
     const handleClick = () => {
         if (!map) return;
-        if (loading) {
+        if (state.loading) {
             toast.info("Location is loading...");  // Inform the user that location is loading
             return;
         }
-        if (error) {
-            toast.error(`Error: ${error}`);  // Show error message if any
+        if (state.error) {
+            toast.error(`Error: ${state.error}`);  // Show error message if any
             return;
         }
-        if (!userLocation) {
+        if (!state.latitude || !state.longitude) {
             toast.info("Enable location services to use this feature"); // Prompt to enable location
             return;
         }
@@ -30,8 +30,8 @@ const RecenterControl = ({className}: { className?: string }) => {
         // If all is good, recenter the map to the user's location
         map.setZoom(15);
         map.panTo({
-            lat: userLocation.coords.latitude,
-            lng: userLocation.coords.longitude
+            lat: state.latitude,
+            lng: state.longitude
         });
     };
 
