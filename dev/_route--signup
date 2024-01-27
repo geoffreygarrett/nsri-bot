@@ -1,0 +1,173 @@
+import * as z from "zod";
+import supabase, {Database} from "@/supabase";
+
+
+// export const signUpSchema = z.object({
+//     phone: z.string().min(10).max(10),
+//     password: z.string().min(8),
+//     code: z.string().min(6).max(6),
+// });
+
+
+// async function signUp(values: z.infer<typeof formSchema>) {
+//     return await supabase.auth.signUp({
+//         phone: values.phone,
+//         password: values.password,
+//         options: {
+//             channel: 'whatsapp',
+//             data: {
+//                 signup_code: values.code,
+//                 wa_id: values.phone,
+//             },
+//         },
+//     });
+// }
+
+import {signUpSchema} from "@/schema";
+
+import {NextRequest, NextResponse} from "next/server";
+import {createRouteHandlerClient} from "@supabase/auth-helpers-nextjs";
+import {cookies} from "next/headers";
+import {formatPhone} from "@/app/(auth)/format-phone";
+import {PostgrestError} from "@supabase/supabase-js";
+
+
+
+
+
+export async function POST(request: NextRequest) {
+
+    // verify with zod
+    const payload = await request.json();
+    const parsed = signUpSchema.safeParse(payload);
+    if (!parsed.success) {
+        return new NextResponse(JSON.stringify(parsed.error), {
+            status: 400,
+            headers: {'Content-Type': 'application/json'}
+        });
+    }
+    const values = parsed.data;
+    const formattedPhone = formatPhone(values.phone.number, values.phone.country);
+
+    // supabase
+    const supabase = createRouteHandlerClient<Database>({cookies: () => cookies()});
+    // check if user exists
+    const user = await supabase.from('users').select('*').eq('phone', formattedPhone);
+    console.log('user', user);
+    if (user.error) {
+        return new NextResponse(JSON.stringify({
+            error:
+                {
+                    message: 'Error checking user (supabase)',
+                    details: user.error.message,
+                    code: user.error.code,
+                    hints: user.error.hint,
+                }
+        }), {
+            status: 500,
+            headers: {'Content-Type': 'application/json'}
+        });
+    } else if (user.data.length > 0) {
+        return new NextResponse(JSON.stringify(
+            {
+                error: {
+                    message: 'Phone number already registered',
+                    details: 'Phone number already registered in the public.users table',
+                    code: 'P0001',
+                    hints: 'Try logging in instead',
+                }
+            }
+        ), {
+            status: 409,
+            headers: {'Content-Type': 'application/json'}
+        });
+    }
+
+    // check if invitation exists
+    const invitations
+        = await supabase.from('invitations')
+        .select('*, invitations_sent(*, messages_sent(*))')
+        .eq('stamp_id', values.stamp).single();
+    if (invitations.error) {
+        if (invitations.status === 406) {
+            return new NextResponse(JSON.stringify(
+                {
+                    error: {
+                        message: 'Invitation does not exist',
+                        details: 'Invitation does not exist in the public.invitations table',
+                        code: 'P0002',
+                        hints: 'Try requesting a new invitation',
+                    }
+                }
+            ), {
+                status: 404,
+                headers: {'Content-Type': 'application/json'}
+            });
+        } else {
+            return new NextResponse(JSON.stringify(
+                {
+                    error:
+                        {
+                            message: 'Error checking invitation (supabase)',
+                            details: invitations.error.message,
+                            code: invitations.error.code,
+                            hints: invitations.error.hint,
+                        }
+                }
+            ), {
+                status: 400,
+                headers: {'Content-Type': 'application/json'}
+            });
+        }
+    }
+
+    // check if the phone number is in the invitation
+    const removeChannel = (str: string) => str.replace(/whatsapp:/, '');
+    let permitted = false;
+    console.log('invitations', invitations);
+    for (const sent of invitations.data.invitations_sent) {
+        console.log('sent', formattedPhone, sent.messages_sent.to, removeChannel(sent.messages_sent.to));
+        if (removeChannel(sent.messages_sent.to) === formattedPhone) {
+            permitted = true;
+            break;
+        }
+    }
+    if (!permitted) {
+        return new NextResponse(JSON.stringify(
+            {
+                error: {
+                    message: 'Phone number not permitted',
+                    details: 'Phone number not permitted in the invitation',
+                    code: 'P0003',
+                    hints: 'Try requesting a new invitation',
+                }
+            }), {
+            status: 401,
+            headers: {'Content-Type': 'application/json'}
+        });
+    }
+
+    // sign up user
+    const result = await supabase.auth.signUp({
+        phone: formattedPhone,
+        password: values.password,
+        options: {
+            channel: 'whatsapp',
+            data: {
+                stamp_id: values.stamp,
+                whatsapp_id: formattedPhone,
+                invitation_id: invitations.data.id,
+            },
+        },
+    });
+
+
+    console.log('result', result);
+
+    return new NextResponse(JSON.stringify({}), {status: 200, headers: {'Content-Type': 'application/json'}});
+
+}
+
+// const supabase
+//     = createRouteHandlerClient<Database>({cookies: () => cookies()});
+//

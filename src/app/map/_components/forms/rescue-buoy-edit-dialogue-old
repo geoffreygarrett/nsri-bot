@@ -1,0 +1,191 @@
+"use client";
+
+import React from 'react';
+import {useForm, Controller} from 'react-hook-form';
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
+import {buoyStatusEnum, rescueBuoySchema} from "@/schema"; // Define this schema as per your data model
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {z} from "zod";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {BuoyStatus} from "@prisma/client";
+import Image from "next/image";
+import {CameraIcon} from "@heroicons/react/24/outline";
+
+
+export default function EditRescueBuoyForm({buoy, open, onClose}: { buoy: any, open: boolean, onClose: () => void }) {
+    const form = useForm({
+        defaultValues: {
+            name: buoy.name,
+            lat: buoy.lat,
+            lng: buoy.lng,
+            alt: buoy.alt,
+            status: buoy.status,
+            image: null,
+            metadata: JSON.stringify(buoy.metadata, null, 2),
+        },
+        resolver: zodResolver(rescueBuoySchema),
+    });
+
+    const onSubmit = async (values: z.infer<typeof rescueBuoySchema>) => {
+        console.log(values);
+        // API call to update buoy data
+    };
+
+    const FormElement = ({children}: { children: React.ReactNode }) => (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+                {children}
+            </form>
+        </Form>
+    );
+
+    return (
+        <Dialog open={open} onOpenChange={onClose}>
+            <DialogContent className="w-[600px]">
+                <DialogHeader>
+                    <DialogTitle>Edit Buoy</DialogTitle>
+                </DialogHeader>
+                <div className="flex space-x-4">
+                    <div className="w-1/3">
+                        {
+                            buoy.image_url ? (
+                                <Image
+                                    src={buoy.image_url}
+                                    alt="Buoy"
+                                    width={200}
+                                    height={200}
+                                    objectFit="cover"
+                                />
+                            ) : (
+                                <div className="w-full aspect-square flex items-center justify-center bg-gray-200 dark:bg-gray-800">
+                                    <CameraIcon className="h-24 w-24 text-gray-400" aria-hidden="true" />
+                                </div>
+                            )
+                        }
+                    </div>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
+
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} placeholder="Buoy Name"/>
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="lat"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Latitude</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} placeholder="Latitude"/>
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="lng"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Longitude</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} placeholder="Longitude"/>
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="alt"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Altitude</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} placeholder="Altitude"/>
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Status</FormLabel>
+                                        <FormControl>
+                                            <Select {...form.register("status")}>
+                                                <SelectTrigger className="w-[180px]">
+                                                    <SelectValue placeholder="Select Status"/>
+                                                </SelectTrigger>
+                                                <SelectContent {...field}>
+                                                    {Object.values(BuoyStatus).map((status) => (
+                                                        <SelectItem key={status} value={status}>{status}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="image"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Image</FormLabel>
+                                        <FormControl>
+                                            <Input type="file" {...field} id="picture"/>
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="metadata"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Metadata</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} placeholder="Metadata (JSON format)"/>
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <DialogFooter>
+                                <Button type="submit">Save Changes</Button>
+                                <Button variant="secondary" onClick={onClose}>Cancel</Button>
+                            </DialogFooter>
+                        </form>
+                    </Form>
+                </div>
+
+            </DialogContent>
+        </Dialog>
+    );
+}

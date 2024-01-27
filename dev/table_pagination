@@ -1,0 +1,125 @@
+import {ChevronLeftIcon, ChevronRightIcon} from '@heroicons/react/20/solid'
+
+type PaginationProps = {
+    currentPage: number,
+    totalItems: number,
+    itemsPerPage: number,
+    onPageChange: (page: number) => void,
+};
+
+const Pagination: React.FC<PaginationProps & {
+    onItemsPerPageChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
+}> = ({
+          currentPage,
+          totalItems,
+          itemsPerPage,
+          onPageChange,
+          onItemsPerPageChange,
+      }) => {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    const handlePreviousClick = () => {
+        console.log("PREVIOUS CLICK");
+        if (currentPage > 1) {
+            onPageChange(currentPage - 1);
+        }
+    };
+
+    const handleNextClick = () => {
+        console.log("NEXT CLICK");
+        if (currentPage < totalPages) {
+            onPageChange(currentPage + 1);
+        }
+    };
+
+    // Generate page numbers
+    let startPage = Math.max(1, currentPage - Math.floor(5 / 2));
+    let endPage = Math.min(totalPages, startPage + 5 - 1);
+    if (endPage - startPage + 1 < 5 && startPage > 1) {
+        startPage = Math.max(1, endPage - 5 + 1);
+    }
+    const pageNumbers = Array.from({length: endPage - startPage + 1}, (_, i) => startPage + i);
+
+    return (
+        <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+            <div className="flex flex-1 justify-between sm:hidden">
+                <button
+                    onClick={handlePreviousClick}
+                    disabled={currentPage === 1}
+                    className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                    <ChevronLeftIcon className="h-5 w-5" aria-hidden="true"/>
+                    <span className="sr-only">Previous</span>
+                </button>
+                <button
+                    onClick={handleNextClick}
+                    disabled={currentPage === totalPages}
+                    className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                    <ChevronRightIcon className="h-5 w-5" aria-hidden="true"/>
+                    <span className="sr-only">Next</span>
+                </button>
+            </div>
+
+            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                <div>
+                    <p className="text-sm text-gray-700">
+                        Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to <span
+                        className="font-medium">{Math.min(currentPage * itemsPerPage, totalItems)}</span> of{' '}
+                        <span className="font-medium">{totalItems}</span> results
+                    </p>
+                </div>
+                <div className="flex justify-end items-center">
+                    <div className="inline-flex items-center mr-2">
+                        <label htmlFor="itemsPerPage" className="text-sm font-medium text-gray-700 mr-2">Items per
+                            page:</label>
+                        <select
+                            id="itemsPerPage"
+                            value={itemsPerPage}
+                            onChange={onItemsPerPageChange}
+                            className="mt-1 block pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                        >
+                            <option value={100}>100</option>
+                            <option value={500}>500</option>
+                            <option value={1000}>1000</option>
+                        </select>
+                    </div>
+                    {/* ... Any other controls ... */}
+                </div>
+                <div>
+                    <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                        <button
+                            onClick={handlePreviousClick}
+                            disabled={currentPage === 1}
+                            className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                        >
+                            <span className="sr-only">Previous</span>
+                            <ChevronLeftIcon className="h-5 w-5" aria-hidden="true"/>
+                        </button>
+                        {pageNumbers.map(page => (
+                            <button
+                                key={page}
+                                onClick={() => onPageChange(page)}
+                                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${page === currentPage ? 'bg-indigo-600 text-white' : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50'} focus:z-20 focus:outline-offset-0`}
+                            >
+                                {page}
+                            </button>
+                        ))}
+                        <button
+                            onClick={handleNextClick}
+                            disabled={currentPage === totalPages}
+                            className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                        >
+                            <span className="sr-only">Next</span>
+                            <ChevronRightIcon className="h-5 w-5" aria-hidden="true"/>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+
+        </div>
+    );
+};
+
+export default Pagination;

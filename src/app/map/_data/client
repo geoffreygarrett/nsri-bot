@@ -1,0 +1,103 @@
+"use client";
+
+import {Tables} from "@/types/supabase";
+import {reverse_geocode} from "@/code/reverse_geocode";
+import Table from "../../../../dev/table-";
+import React from "react";
+
+type ColumnConfig<T> = {
+    header: string,
+    render: (item: T, isEditing: boolean, onValueChange: (value: any) => void) => React.ReactNode,
+};
+
+const Client = ({data, onEdit}: {
+    data: Tables<'rescue_buoys'>[],
+    onEdit?: (item: Tables<'rescue_buoys'>) => void
+}) => {
+
+    const columns = [
+        {
+            header: 'Station',
+            key: 'station_id',
+            render: (item: Tables<'rescue_buoys'>, isEditing: boolean, onValueChange: (value: any) => void) =>
+                isEditing ?
+                    <input value={item.station_id || ""} onChange={e => onValueChange(e.target.value)}/> :
+                    <>
+                        {item.station_id}
+                    </>
+        },
+        {
+            header: 'Identifier',
+            key: 'buoy_id',
+            render: (item: Tables<'rescue_buoys'>, isEditing: boolean, onValueChange: (value: any) => void) =>
+                isEditing ?
+                    <input value={item.buoy_id || ""} onChange={e => onValueChange(e.target.value)}/> :
+                    <>
+                        <div className="flex items-center">{item.buoy_id}</div>
+                    </>
+        },
+        {
+            header: 'Name',
+            key: 'name',
+            render: (item: Tables<'rescue_buoys'>, isEditing: boolean, onValueChange: (value: any) => void) =>
+                isEditing ?
+                    <input value={item.name} onChange={e => onValueChange(e.target.value)}/> :
+                    <>{item.name}</>
+        },
+        {
+            header: 'Status',
+            key: 'status',
+            render: (item: Tables<'rescue_buoys'>, isEditing: boolean, onValueChange: (value: any) => void) =>
+                isEditing ?
+                    <input value={item.status} onChange={e => onValueChange(e.target.value)}/> :
+                    <>
+                        {item.status}
+                    </>
+        },
+        {
+            header: 'Latitude',
+            key: 'lat',
+            render: (item: Tables<'rescue_buoys'>, isEditing: boolean, onValueChange: (value: any) => void) =>
+                isEditing ?
+                    <input
+                        value={item.lat} onChange={e => onValueChange(e.target.value)}/> :
+                    <>
+                        {item.lat}
+                    </>
+        },
+        {
+            header: 'Longitude',
+            key: 'lng',
+            render: (item: Tables<'rescue_buoys'>, isEditing: boolean, onValueChange: (value: any) => void) =>
+                isEditing ?
+                    <input value={item.lng} onChange={e => onValueChange(e.target.value)}/> :
+                    <>
+                        {item.lng}
+                    </>
+        }
+    ];
+
+    const handleEdit = (item: Tables<'rescue_buoys'>) => {
+        "use client";
+        if (onEdit) {
+            onEdit(item);
+        }
+    }
+
+    const handleDelete = (item: Tables<'rescue_buoys'>) => {
+        "use client";
+        console.log("DELETE");
+    }
+
+    const handleAdd = () => {
+        "use client";
+        console.log("ADD");
+    }
+
+    return (
+        <Table data={data} columns={columns} onEdit={handleEdit} onDelete={handleDelete} onAdd={handleAdd}/>
+    );
+
+}
+
+export default Client;

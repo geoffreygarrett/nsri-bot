@@ -1,3 +1,5 @@
+import {Tables} from "@/types/supabase";
+
 export const enum EquipmentStatus {
     OK = 'OK',
     MISSING = 'MISSING',
@@ -6,17 +8,10 @@ export const enum EquipmentStatus {
     MAINTENANCE = 'MAINTENANCE',
 }
 
+export type IMarker = (Tables<`rescue_buoys`> | Tables<`nsri_stations`>) & { show: boolean };
 
-export type IMarker = {
-    id: string;
-    name: string;
-    lng: number;
-    lat: number;
-    alt?: number;
-    status: EquipmentStatus;
-    last_checked?: string;
-    description?: string;
-};
+// add property of "show" to IMarker
+// export type IMarkerWithShow = IMarker & { show: boolean };
 
 export type IMarkerFolder = {
     [key: string]: IMarker;

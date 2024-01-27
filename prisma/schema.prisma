@@ -1,0 +1,605 @@
+generator client {
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native", "darwin-arm64"]
+  previewFeatures = ["multiSchema", "postgresqlExtensions", "extendedIndexes"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  schemas    = ["public"]
+  extensions = [uuidOssp(map: "uuid-ossp")]
+}
+
+model users {
+  id               String          @id @unique @db.Uuid
+  first_name       String?         @default("")
+  last_name        String?         @default("")
+  phone            String?         @unique
+  whatsapp_user    whatsapp_users? @relation(fields: [whatsapp_user_id], references: [id])
+  whatsapp_user_id String?         @db.Uuid
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  metadata          Json?
+  invitations       invitations[]
+  roleships         roleships[]
+  rescue_buoys_logs rescue_buoys_logs[]
+
+  @@schema("public")
+}
+
+model roles {
+  id    String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name  String @unique
+  level Int
+
+  permissions permissions[]
+  roleships   roleships[]
+  invitations invitations[]
+  station     nsri_stations? @relation(fields: [station_id], references: [id])
+  station_id  Int?
+
+  @@schema("public")
+}
+
+model roleships {
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+
+  // role
+  role    roles  @relation(fields: [role_id], references: [id])
+  role_id String @db.Uuid
+
+  // user
+  user    users  @relation(fields: [user_id], references: [id])
+  user_id String @db.Uuid
+
+  // station
+  station    nsri_stations? @relation(fields: [station_id], references: [id])
+  station_id Int?
+
+  // crud
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  // invitation which provided this roleship
+  invitation    invitations? @relation(fields: [invitation_id], references: [id])
+  invitation_id String?      @db.Uuid
+
+  @@schema("public")
+}
+
+model whatsapp_users {
+  id           String    @id @unique @db.Uuid
+  profile_name String
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  deleted_at   DateTime?
+  users        users[]
+
+  @@schema("public")
+}
+
+model permissions {
+  id    String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name  String  @unique
+  roles roles[]
+
+  can_read_users                   Boolean @default(false)
+  can_read_roles                   Boolean @default(false)
+  can_read_stations                Boolean @default(false)
+  can_read_rescue_buoys            Boolean @default(false)
+  can_read_messages                Boolean @default(false)
+  can_read_message_templates       Boolean @default(false)
+  can_read_invitations             Boolean @default(false)
+  can_read_whatsapp_users          Boolean @default(false)
+  can_read_messages_received       Boolean @default(false)
+  can_read_messages_sent           Boolean @default(false)
+  can_read_messages_status_updates Boolean @default(false)
+
+  can_create_users                   Boolean @default(false)
+  can_create_roles                   Boolean @default(false)
+  can_create_stations                Boolean @default(false)
+  can_create_rescue_buoys            Boolean @default(false)
+  can_create_messages                Boolean @default(false)
+  can_create_message_templates       Boolean @default(false)
+  can_create_invitations             Boolean @default(false)
+  can_create_whatsapp_users          Boolean @default(false)
+  can_create_messages_received       Boolean @default(false)
+  can_create_messages_sent           Boolean @default(false)
+  can_create_messages_status_updates Boolean @default(false)
+
+  can_update_users                   Boolean @default(false)
+  can_update_roles                   Boolean @default(false)
+  can_update_stations                Boolean @default(false)
+  can_update_rescue_buoys            Boolean @default(false)
+  can_update_messages                Boolean @default(false)
+  can_update_message_templates       Boolean @default(false)
+  can_update_invitations             Boolean @default(false)
+  can_update_whatsapp_users          Boolean @default(false)
+  can_update_messages_received       Boolean @default(false)
+  can_update_messages_sent           Boolean @default(false)
+  can_update_messages_status_updates Boolean @default(false)
+
+  can_delete_users                   Boolean @default(false)
+  can_delete_roles                   Boolean @default(false)
+  can_delete_stations                Boolean @default(false)
+  can_delete_rescue_buoys            Boolean @default(false)
+  can_delete_messages                Boolean @default(false)
+  can_delete_message_templates       Boolean @default(false)
+  can_delete_invitations             Boolean @default(false)
+  can_delete_whatsapp_users          Boolean @default(false)
+  can_delete_messages_received       Boolean @default(false)
+  can_delete_messages_sent           Boolean @default(false)
+  can_delete_messages_status_updates Boolean @default(false)
+
+  can_read_all_users                   Boolean @default(false)
+  can_read_all_roles                   Boolean @default(false)
+  can_read_all_stations                Boolean @default(false)
+  can_read_all_rescue_buoys            Boolean @default(false)
+  can_read_all_messages                Boolean @default(false)
+  can_read_all_message_templates       Boolean @default(false)
+  can_read_all_invitations             Boolean @default(false)
+  can_read_all_whatsapp_users          Boolean @default(false)
+  can_read_all_messages_received       Boolean @default(false)
+  can_read_all_messages_sent           Boolean @default(false)
+  can_read_all_messages_status_updates Boolean @default(false)
+
+  can_create_all_users                   Boolean @default(false)
+  can_create_all_roles                   Boolean @default(false)
+  can_create_all_stations                Boolean @default(false)
+  can_create_all_rescue_buoys            Boolean @default(false)
+  can_create_all_messages                Boolean @default(false)
+  can_create_all_message_templates       Boolean @default(false)
+  can_create_all_invitations             Boolean @default(false)
+  can_create_all_whatsapp_users          Boolean @default(false)
+  can_create_all_messages_received       Boolean @default(false)
+  can_create_all_messages_sent           Boolean @default(false)
+  can_create_all_messages_status_updates Boolean @default(false)
+
+  can_update_all_users                   Boolean @default(false)
+  can_update_all_roles                   Boolean @default(false)
+  can_update_all_stations                Boolean @default(false)
+  can_update_all_rescue_buoys            Boolean @default(false)
+  can_update_all_messages                Boolean @default(false)
+  can_update_all_message_templates       Boolean @default(false)
+  can_update_all_invitations             Boolean @default(false)
+  can_update_all_whatsapp_users          Boolean @default(false)
+  can_update_all_messages_received       Boolean @default(false)
+  can_update_all_messages_sent           Boolean @default(false)
+  can_update_all_messages_status_updates Boolean @default(false)
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  @@schema("public")
+}
+
+model invitations {
+  id       String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  stamp_id String @unique
+
+  created_by    users  @relation(fields: [created_by_id], references: [id])
+  created_by_id String @db.Uuid
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  role    roles  @relation(fields: [role_id], references: [id])
+  role_id String @db.Uuid
+
+  station    nsri_stations? @relation(fields: [station_id], references: [id])
+  station_id Int?
+
+  note String?
+
+  metadata      Json?
+  messages_sent messages_sent[]
+  roleship      roleships[]
+
+  @@schema("public")
+}
+
+// model invitations_sent {
+//   id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+//
+//   invitation    invitations @relation(fields: [invitation_id], references: [id])
+//   invitation_id String      @db.Uuid
+//
+//   message    messages_sent @relation(fields: [message_id], references: [id])
+//   message_id String        @db.Uuid
+//
+//   created_at DateTime  @default(now())
+//   updated_at DateTime  @updatedAt
+//   deleted_at DateTime?
+//
+//   metadata Json?
+//
+//   @@schema("public")
+// }
+
+model log_endpoint {
+  id               String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at       DateTime @default(now())
+  parent_endpoint  String? // Optional field for the parent API endpoint
+  endpoint         String
+  method           String
+  request_body     String?
+  request_headers  String?
+  response_body    String?
+  response_headers String?
+  response_status  Int?
+  duration         Float
+  ip               String?
+  error            String?
+  metadata         Json? // Optional field for additional metadata
+
+  @@schema("public")
+}
+
+model nsri_stations {
+  id               Int     @id @default(autoincrement())
+  name             String
+  emergency_number String?
+
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  deleted_at   DateTime?
+  rescue_buoys rescue_buoys[]
+  roles        roles[]
+
+  metadata    Json?
+  roleships   roleships[]
+  invitations invitations[]
+
+  image_url   String?
+
+  // the geometry column itself
+  location     Unsupported("geometry(PointZ, 4326)")
+  service_area Unsupported("geometry(Polygon, 4326)")?
+
+  @@index([location], name: "nsri_stations_location_idx", type: Gist)
+  @@schema("public")
+}
+
+enum BuoyStatus {
+  OK
+  MISSING
+  PROPOSED
+  ATTENTION
+  UNKNOWN
+
+  @@map("buoy_status")
+  @@schema("public")
+}
+
+model rescue_buoys {
+  id               String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  station_id       Int?
+  buoy_id          Int?
+  station          nsri_stations?      @relation(fields: [station_id], references: [id])
+  name             String
+  old_id           String?
+  status           BuoyStatus          @default(OK)
+  image_url        String?
+  rescue_buoy_logs rescue_buoys_logs[]
+  description      String?
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  deleted_at DateTime?
+
+  // the geometry column itself
+  location Unsupported("geometry(PointZ, 4326)")
+
+  metadata    Json?
+  buoy_rescue buoy_rescue[]
+
+  @@index([location], name: "rescue_buoy_location_idx", type: Gist)
+  @@schema("public")
+}
+
+enum LogAction {
+  CREATE
+  UPDATE
+  DELETE
+  MAINTENANCE
+  USED
+
+  @@map("log_action")
+  @@schema("public")
+}
+
+model rescue_buoys_logs {
+  id             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  rescue_buoy_id String    @db.Uuid
+  user_id        String    @db.Uuid
+  action         LogAction // Enum for Create, Update, Delete, etc.
+  description    String? // Description of the change
+  old_values     Json? // Snapshot of the buoy's state before the change
+  new_values     Json? // Snapshot of the buoy's state after the change
+  timestamp      DateTime  @default(now()) // When the change was made
+
+  user        users         @relation(fields: [user_id], references: [id])
+  rescue_buoy rescue_buoys  @relation(fields: [rescue_buoy_id], references: [id])
+  buoy_rescue buoy_rescue[]
+
+  @@schema("public")
+}
+
+// BUOY RESCUE EXCEL RELATIONS AND TABLES //////////////////////////////////////
+enum Ethnicity {
+  COLOURED // Person of Colour, POC?
+  WHITE
+  BLACK
+  INDIAN
+  CHINESE
+  FOREIGN
+  UNKNOWN
+
+  @@map("ethnicity")
+  @@schema("public")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNKNOWN
+
+  @@map("gender")
+  @@schema("public")
+}
+
+enum AgeGroup {
+  ADULT
+  CHILD
+  UNKNOWN
+
+  @@map("age_group")
+  @@schema("public")
+}
+
+model buoy_rescue {
+  id                        Int              @id @default(autoincrement())
+  reference_no              String?
+  datetime                  DateTime?
+  people_assisted           Int?
+  pink_buoy_not_used_people Int?
+  max_persons_floated       Int?
+  prb_location_number       String?
+  place                     String?
+  city                      String?
+  sponsor                   String?
+  rescue                    String?
+  drowning_cause_id         Int?
+  drowning_cause            drowning_cause?  @relation(fields: [drowning_cause_id], references: [id])
+  additional_info           String?
+  link                      String?
+  rescuer_details           rescuer_detail[]
+  rescued_details           rescued_detail[]
+  rescue_buoy_id            String           @db.Uuid
+  rescue_buoy               rescue_buoys     @relation(fields: [rescue_buoy_id], references: [id])
+
+  rescue_buoys_log    rescue_buoys_logs? @relation(fields: [rescue_buoys_log_id], references: [id])
+  rescue_buoys_log_id String?            @db.Uuid
+
+  @@schema("public")
+}
+
+model rescuer_detail {
+  id             Int          @id @default(autoincrement())
+  name           String?
+  age            String?
+  experience     String?
+  capacity       String?
+  used_buoy      Boolean?
+  buoy_rescue    buoy_rescue? @relation(fields: [buoy_rescue_id], references: [id])
+  buoy_rescue_id Int?
+
+  @@schema("public")
+}
+
+model rescued_detail {
+  id             Int          @id @default(autoincrement())
+  ethnicity      Ethnicity?
+  gender         Gender?
+  age_group      AgeGroup?
+  age            String?
+  used_buoy      Boolean?
+  buoy_rescue    buoy_rescue? @relation(fields: [buoy_rescue_id], references: [id])
+  buoy_rescue_id Int?
+
+  @@schema("public")
+}
+
+model drowning_cause {
+  id           Int           @id @default(autoincrement())
+  cause        String
+  buoy_rescues buoy_rescue[]
+
+  @@schema("public")
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+// model rescue_buoys_logs {
+//   id             String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+//   rescue_buoy_id String       @db.Uuid
+//   rescue_buoy    rescue_buoys @relation(fields: [rescue_buoy_id], references: [id])
+//   status         String
+//   lat            Float
+//   lng            Float
+//   alt            Float
+//   changed_by     String
+//   created_at     DateTime     @default(now())
+//   updated_at     DateTime     @updatedAt
+//   deleted_at     DateTime?
+//   comment        String?
+//
+//   buoy_rescue buoy_rescue[]
+//
+//   @@index([rescue_buoy_id])
+//   @@schema("public")
+// }
+
+// model message_template {
+//   id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+//   name       String?
+//   body       String?
+//   created_at DateTime  @default(now())
+//   updated_at DateTime  @updatedAt
+//   deleted_at DateTime?
+//
+//   @@schema("public")
+// }
+//
+// model content_template {
+//   id            String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+//   content_sid   String   @unique
+//
+//   @@schema("public")
+// }
+
+model message_templates {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name       String
+  body       String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  @@schema("public")
+}
+
+model messages_received {
+  id                 String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  sms_message_sid    String
+  num_media          String
+  profile_name       String
+  sms_sid            String
+  wa_id              String
+  sms_status         String
+  body               String?
+  to                 String
+  num_segments       String
+  referral_num_media String
+  message_sid        String
+  account_sid        String
+  from               String
+  api_version        String
+
+  // timestamp
+  timestamp DateTime @default(now())
+
+  // media message
+  media_content_type0 String?
+  media_url0          String?
+
+  // location message
+  latitude  String?
+  longitude String?
+
+  // address message
+  address String?
+  label   String?
+
+  // button message
+  original_replied_message_sender String?
+  original_replied_message_sid    String?
+  button_text                     String?
+  button_payload                  String?
+
+  @@schema("public")
+}
+
+model messages_sent {
+  id                     String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  body                   String // The text content of the outgoing message
+  num_segments           String // Total number of message segments
+  direction              String // The direction of the message (incoming/outgoing)
+  from                   String? // The sender's phone number or identifier
+  to                     String // The recipient's phone number or identifier
+  date_updated           DateTime // The last time the message was updated
+  price                  String? // The price charged for the message
+  error_message          String? // The error message if the message failed
+  uri                    String? // The URI of the resource
+  account_sid            String // The account SID associated with the message
+  num_media              String // The number of media files associated with the message
+  status                 String // The status of the message (sent, failed, etc.)
+  messaging_service_sid  String? // The messaging service SID used for the message
+  sid                    String    @unique // The unique identifier for the message
+  date_sent              DateTime? // The date the message was sent
+  date_created           DateTime // The date the message was created
+  error_code             String? // Error code if the message failed
+  price_unit             String? // The currency unit for the message price
+  api_version            String // The API version used for the message
+  subresource_uris_media String? // URI for the media subresource
+
+  // Additional fields
+  message_status String? // The status of the message delivery
+  delivered_at   DateTime? // The timestamp when the message was delivered
+  sent_at        DateTime? // The timestamp when the message was sent
+  read_at        DateTime? // The timestamp when the message was read
+  signed_up_at   DateTime? // The timestamp when the message was signed
+
+  // New potential fields from MessageListInstanceCreateOptions
+  status_callback   String? // URL for message status updates
+  application_sid   String? // SID of the associated TwiML Application
+  max_price         String? // Maximum price in US dollars for delivery
+  provide_feedback  Boolean? // Indication of delivery confirmation feedback
+  attempt           Int? // Total number of attempts made to send the message
+  validity_period   Int? // Maximum length in seconds in the outgoing queue
+  force_delivery    Boolean? // Reserved for future use
+  content_retention String? // Content retention setting
+  address_retention String? // Address retention setting
+  smart_encoded     Boolean? // Unicode character detection and replacement setting
+  persistent_action String[] // Rich actions for non-SMS/MMS channels
+  shorten_urls      Boolean? // Indicates if Twilio should shorten URLs in the body
+  schedule_type     String? // Type of scheduling for message delivery
+  send_at           DateTime? // Time when Twilio will send the message
+  send_as_mms       Boolean? // Deliver the message as a single MMS message
+  content_variables Json? // Key-value pairs of Template variables and substitution values
+  risk_check        String? // Risk check setting
+  media_url         String[] // URL of media to include in Message content
+  content_sid       String? // SID of the Content Template to be used with the Message
+
+  // Field for invitation
+  invitation    invitations? @relation(fields: [invitation_id], references: [id])
+  invitation_id String?      @db.Uuid
+
+  // invitations_sent  invitations_sent[]
+  @@schema("public")
+}
+
+model messages_status_updates {
+  id                  String   @id @default(dbgenerated("uuid_generate_v4()"))
+  timestamp           DateTime @default(now())
+  channel_prefix      String?
+  api_version         String?
+  message_status      String?
+  sms_sid             String?
+  sms_status          String?
+  channel_install_sid String?
+  to                  String?
+  from                String?
+  message_sid         String?
+  structured_message  String?
+  account_sid         String?
+  channel_to_address  String?
+
+  messaging_service_sid String?
+
+  // Fields for error messages
+  channel_status_message String?
+  error_code             String?
+  error_message          String?
+  channel_status_code    String?
+
+  @@schema("public")
+}

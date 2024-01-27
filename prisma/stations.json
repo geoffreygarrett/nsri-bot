@@ -1,0 +1,317 @@
+[
+    {
+        "name": "*Air Sea Rescue",
+        "station_number": "29",
+        "emergency_number": "0829905980",
+        "lat": "-33.9048591",
+        "lng": "18.4922946"
+    },
+    {
+        "name": "Agulhas",
+        "station_number": "30",
+        "emergency_number": "0829905952",
+        "lat": "-34.798567",
+        "lng": "20.059433"
+    },
+    {
+        "name": "Bakoven",
+        "station_number": "2",
+        "emergency_number": "0829905962",
+        "lat": "-33.960583",
+        "lng": "18.373033"
+    },
+    {
+        "name": "Ballito",
+        "station_number": "41",
+        "emergency_number": "0636992687",
+        "lat": "-29.4375777",
+        "lng": "31.2225713"
+    },
+    {
+        "name": "Durban",
+        "station_number": "5",
+        "emergency_number": "0829905948",
+        "lat": "-29.873933",
+        "lng": "31.050767"
+    },
+    {
+        "name": "East London",
+        "station_number": "7",
+        "emergency_number": "0829905972",
+        "lat": "-33.02305",
+        "lng": "27.8913"
+    },
+    {
+        "name": "Gauteng",
+        "station_number": "27",
+        "emergency_number": "0609919301",
+        "lat": "-26.1571028",
+        "lng": "28.354053"
+    },
+    {
+        "name": "Gordon\u2019s Bay",
+        "station_number": "9",
+        "emergency_number": "0724488482",
+        "lat": "-34.16435",
+        "lng": "18.859733"
+    },
+    {
+        "name": "Gqeberha",
+        "station_number": "6",
+        "emergency_number": "0829900828",
+        "lat": "-33.967537",
+        "lng": "25.633857"
+    },
+    {
+        "name": "Hartbeespoort Dam",
+        "station_number": "25",
+        "emergency_number": "0829905961",
+        "lat": "-25.730167",
+        "lng": "27.86045"
+    },
+    {
+        "name": "Hermanus",
+        "station_number": "17",
+        "emergency_number": "0829905967",
+        "lat": "-34.433417",
+        "lng": "19.22515"
+    },
+    {
+        "name": "Hout Bay",
+        "station_number": "8",
+        "emergency_number": "0829905964",
+        "lat": "-34.05025",
+        "lng": "18.345333"
+    },
+    {
+        "name": "Jeffreys Bay",
+        "station_number": "37",
+        "emergency_number": "0799160390",
+        "lat": "-34.048333",
+        "lng": "24.923333"
+    },
+    {
+        "name": "Kei Mouth (Aux)",
+        "station_number": "47",
+        "emergency_number": "0761002829",
+        "lat": "-32.413217",
+        "lng": "28.222285"
+    },
+    {
+        "name": "Kleinmond",
+        "station_number": "42",
+        "emergency_number": "0636992765",
+        "lat": "-34.3353988",
+        "lng": "19.0126281"
+    },
+    {
+        "name": "Knysna",
+        "station_number": "12",
+        "emergency_number": "0829905956",
+        "lat": "-34.076083",
+        "lng": "23.060383"
+    },
+    {
+        "name": "Kommetjie",
+        "station_number": "26",
+        "emergency_number": "0829905979",
+        "lat": "-34.140833",
+        "lng": "18.328833"
+    },
+    {
+        "name": "Lambert\u2019s Bay",
+        "station_number": "24",
+        "emergency_number": "0609603027",
+        "lat": "-32.09072613",
+        "lng": "18.30040054"
+    },
+    {
+        "name": "Mdumbi (Lifeguards)",
+        "station_number": "49",
+        "emergency_number": "0870949774",
+        "lat": "-31.561929",
+        "lng": "29.125359"
+    },
+    {
+        "name": "Melkbosstrand",
+        "station_number": "18",
+        "emergency_number": "0829905958",
+        "lat": "-33.729",
+        "lng": "18.4385"
+    },
+    {
+        "name": "Mossel Bay",
+        "station_number": "15",
+        "emergency_number": "0829905954",
+        "lat": "-34.180583",
+        "lng": "22.1488"
+    },
+    {
+        "name": "Mykonos",
+        "station_number": "4",
+        "emergency_number": "0829905966",
+        "lat": "-33.047367",
+        "lng": "18.0398"
+    },
+    {
+        "name": "Oyster Bay",
+        "station_number": "36",
+        "emergency_number": "0829905968",
+        "lat": "-34.1696729",
+        "lng": "24.653434"
+    },
+    {
+        "name": "Plettenberg Bay",
+        "station_number": "14",
+        "emergency_number": "0829905975",
+        "lat": "-34.058333",
+        "lng": "23.378"
+    },
+    {
+        "name": "Port Alfred",
+        "station_number": "11",
+        "emergency_number": "0829905971",
+        "lat": "-33.594933",
+        "lng": "26.89095"
+    },
+    {
+        "name": "Port Nolloth",
+        "station_number": "43",
+        "emergency_number": "0636988971",
+        "lat": "-29.23840901",
+        "lng": "16.92887244"
+    },
+    {
+        "name": "Port St Johns (Aux)",
+        "station_number": "28",
+        "emergency_number": "0825505430",
+        "lat": "-31.5300217",
+        "lng": "29.464359"
+    },
+    {
+        "name": "Richards Bay",
+        "station_number": "19",
+        "emergency_number": "0829905949",
+        "lat": "-28.791633",
+        "lng": "32.08365"
+    },
+    {
+        "name": "Rocky Bay",
+        "station_number": "39",
+        "emergency_number": "0726525158",
+        "lat": "-30.334283",
+        "lng": "30.733833"
+    },
+    {
+        "name": "Shelly Beach",
+        "station_number": "20",
+        "emergency_number": "0829905950",
+        "lat": "-30.808517",
+        "lng": "30.412217"
+    },
+    {
+        "name": "Simon&#039;s Town",
+        "station_number": "10",
+        "emergency_number": "0829905965",
+        "lat": "-34.192283",
+        "lng": "18.434367"
+    },
+    {
+        "name": "St Francis Bay",
+        "station_number": "21",
+        "emergency_number": "0829905969",
+        "lat": "-34.184333",
+        "lng": "24.8523"
+    },
+    {
+        "name": "St Lucia",
+        "station_number": "40",
+        "emergency_number": "0636992722",
+        "lat": "-28.3726019",
+        "lng": "32.4141631"
+    },
+    {
+        "name": "Still Bay",
+        "station_number": "31",
+        "emergency_number": "0829905978",
+        "lat": "-34.385733",
+        "lng": "21.423917"
+    },
+    {
+        "name": "Storms River (Aux)",
+        "station_number": "46",
+        "emergency_number": "0760922465",
+        "lat": "-34.02293034",
+        "lng": "23.89860993"
+    },
+    {
+        "name": "Strandfontein",
+        "station_number": "16",
+        "emergency_number": "0829906753",
+        "lat": "-34.086742",
+        "lng": "18.5582613"
+    },
+    {
+        "name": "Strandfontein (Matzikama)",
+        "station_number": "45",
+        "emergency_number": "0665867992",
+        "lat": "-31.451409",
+        "lng": "18.133488"
+    },
+    {
+        "name": "Table Bay",
+        "station_number": "3",
+        "emergency_number": "0829905963",
+        "lat": "-33.905636",
+        "lng": "18.420681"
+    },
+    {
+        "name": "Theewaterskloof",
+        "station_number": "38",
+        "emergency_number": "0724466344",
+        "lat": "-34.176",
+        "lng": "19.262533"
+    },
+    {
+        "name": "Umhlanga",
+        "station_number": "50",
+        "emergency_number": "0829905948",
+        "lat": "-29.725979",
+        "lng": "31.087771"
+    },
+    {
+        "name": "Vaal Dam",
+        "station_number": "22",
+        "emergency_number": "0836371257",
+        "lat": "-26.896063",
+        "lng": "28.115053"
+    },
+    {
+        "name": "Wilderness",
+        "station_number": "23",
+        "emergency_number": "0829905955",
+        "lat": "-33.9952",
+        "lng": "22.580567"
+    },
+    {
+        "name": "Witbank Dam",
+        "station_number": "35",
+        "emergency_number": "0609622620",
+        "lat": "-25.9093",
+        "lng": "29.308733"
+    },
+    {
+        "name": "Witsand",
+        "station_number": "33",
+        "emergency_number": "0829905957",
+        "lat": "-34.391333",
+        "lng": "20.837833"
+    },
+    {
+        "name": "Yzerfontein",
+        "station_number": "34",
+        "emergency_number": "0829905974",
+        "lat": "-33.346",
+        "lng": "18.149833"
+    }
+]

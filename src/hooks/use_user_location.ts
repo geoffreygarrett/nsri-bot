@@ -1,32 +1,32 @@
 import {useState, useEffect} from 'react';
 
-const useUserLocation = () => {
-    const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null);
-    const [locationError, setLocationError] = useState<string | null>(null);
+const useGeolocationPosition = ({enabled = true, highAccuracy = true}: {
+    enabled?: boolean,
+    highAccuracy?: boolean
+} = {}) => {
+    const [geolocationError, setGeolocationError] = useState<GeolocationPositionError | null>(null);
+    const [geolocationPosition, setGeolocationPosition] = useState<GeolocationPosition | null>(null);
 
     useEffect(() => {
-        if (!navigator.geolocation) {
-            setLocationError('Geolocation is not supported by your browser.');
+        if (!enabled) {
+            setGeolocationPosition(null);
+            setGeolocationError(null);
             return;
         }
-
         const watchId = navigator.geolocation.watchPosition(
             position => {
-                setUserLocation({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                });
+                setGeolocationPosition(position);
             },
             error => {
-                setLocationError(error.message);
+                setGeolocationError(error);
             },
-            {enableHighAccuracy: true}
+            {enableHighAccuracy: highAccuracy}
         );
 
         return () => navigator.geolocation.clearWatch(watchId);
-    }, []);
+    }, [enabled, highAccuracy]);
 
-    return {userLocation, locationError};
+    return {geolocationPosition, geolocationError};
 };
 
-export default useUserLocation;
+export default useGeolocationPosition;

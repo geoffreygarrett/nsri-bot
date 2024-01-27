@@ -1,0 +1,271 @@
+write code to parse this into a json using python for me
+
+window._gmData.infoWindows['base-finder'] = {
+    '75110-baseLocation': {"content":"<div>\n    <h3>*Air Sea Rescue<\/h3>\n    <p><strong>Station number: <\/strong>29<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5980\">082 990 5980<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-33.9048591, 18.4922946<\/p>\n    <\/div>\n"},
+    '75079-baseLocation': {"content":"<div>\n    <h3>Agulhas<\/h3>\n    <p><strong>Station number: <\/strong>30<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5952\">082 990 5952<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.798567, 20.059433<\/p>\n    <\/div>\n"},
+    '75104-baseLocation': {"content":"<div>\n    <h3>Bakoven<\/h3>\n    <p><strong>Station number: <\/strong>2<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5962\">082 990 5962<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-33.960583, 18.373033<\/p>\n    <p><a href=\"https:\/\/www.nsri.org.za\/rescue\/base\/bakoven\/\">View Base<\/a><\/p><\/div>\n"},
+    '74988-baseLocation': {"content":"<div>\n    <h3>Ballito<\/h3>\n    <p><strong>Station number: <\/strong>41<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:063 699 2687\">063 699 2687<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-29.4375777, 31.2225713<\/p>\n    <\/div>\n"},
+    '74992-baseLocation': {"content":"<div>\n    <h3>Durban<\/h3>\n    <p><strong>Station number: <\/strong>5<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5948\">082 990 5948<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-29.873933, 31.050767<\/p>\n    <p><a href=\"https:\/\/www.nsri.org.za\/rescue\/base\/durban\/\">View Base<\/a><\/p><\/div>\n"},
+    '75022-baseLocation': {"content":"<div>\n    <h3>East London<\/h3>\n    <p><strong>Station number: <\/strong>7<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5972\">082 990 5972<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-33.02305, 27.8913<\/p>\n    <\/div>\n"},
+    '74973-baseLocation': {"content":"<div>\n    <h3>Gauteng<\/h3>\n    <p><strong>Station number: <\/strong>27<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:060 991 9301\">060 991 9301<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-26.1571028, 28.354053<\/p>\n    <\/div>\n"},
+    '75091-baseLocation': {"content":"<div>\n    <h3>Gordon’s Bay<\/h3>\n    <p><strong>Station number: <\/strong>9<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:072 448 8482\">072 448 8482<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.16435, 18.859733<\/p>\n    <\/div>\n"},
+    '75028-baseLocation': {"content":"<div>\n    <h3>Gqeberha<\/h3>\n    <p><strong>Station number: <\/strong>6<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 0828\">082 990 0828<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-33.967537, 25.633857<\/p>\n    <p><a href=\"https:\/\/www.nsri.org.za\/rescue\/base\/gqeberha\/\">View Base<\/a><\/p><\/div>\n"},
+    '74968-baseLocation': {"content":"<div>\n    <h3>Hartbeespoort Dam<\/h3>\n    <p><strong>Station number: <\/strong>25<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5961\">082 990 5961<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-25.730167, 27.86045<\/p>\n    <\/div>\n"},
+    '75082-baseLocation': {"content":"<div>\n    <h3>Hermanus<\/h3>\n    <p><strong>Station number: <\/strong>17<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5967\">082 990 5967<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.433417, 19.22515<\/p>\n    <\/div>\n"},
+    '75101-baseLocation': {"content":"<div>\n    <h3>Hout Bay<\/h3>\n    <p><strong>Station number: <\/strong>8<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5964\">082 990 5964<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.05025, 18.345333<\/p>\n    <p><a href=\"https:\/\/www.nsri.org.za\/rescue\/base\/hout-bay\/\">View Base<\/a><\/p><\/div>\n"},
+    '75037-baseLocation': {"content":"<div>\n    <h3>Jeffreys Bay<\/h3>\n    <p><strong>Station number: <\/strong>37<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:079 916 0390\">079 916 0390<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.048333, 24.923333<\/p>\n    <p><a href=\"https:\/\/www.nsri.org.za\/rescue\/base\/jeffreys-bay\/\">View Base<\/a><\/p><\/div>\n"},
+    '132941-baseLocation': {"content":"<div>\n    <h3>Kei Mouth (Aux)<\/h3>\n    <p><strong>Station number: <\/strong>47<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:076 100 2829\">076 100 2829<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-32.413217, 28.222285<\/p>\n    <\/div>\n"},
+    '75088-baseLocation': {"content":"<div>\n    <h3>Kleinmond<\/h3>\n    <p><strong>Station number: <\/strong>42<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:063 699 2765\">063 699 2765<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.3353988, 19.0126281<\/p>\n    <\/div>\n"},
+    '75064-baseLocation': {"content":"<div>\n    <h3>Knysna<\/h3>\n    <p><strong>Station number: <\/strong>12<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5956\">082 990 5956<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.076083, 23.060383<\/p>\n    <\/div>\n"},
+    '75098-baseLocation': {"content":"<div>\n    <h3>Kommetjie<\/h3>\n    <p><strong>Station number: <\/strong>26<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5979\">082 990 5979<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.140833, 18.328833<\/p>\n    <\/div>\n"},
+    '74964-baseLocation': {"content":"<div>\n    <h3>Lambert’s Bay<\/h3>\n    <p><strong>Station number: <\/strong>24<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:060 960 3027\">060 960 3027<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-32.09072613, 18.30040054<\/p>\n    <\/div>\n"},
+    '132952-baseLocation': {"content":"<div>\n    <h3>Mdumbi (Lifeguards)<\/h3>\n    <p><strong>Station number: <\/strong>49<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:087 094 9774\">087 094 9774<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-31.561929, 29.125359<\/p>\n    <\/div>\n"},
+    '75113-baseLocation': {"content":"<div>\n    <h3>Melkbosstrand<\/h3>\n    <p><strong>Station number: <\/strong>18<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5958\">082 990 5958<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-33.729, 18.4385<\/p>\n    <\/div>\n"},
+    '75070-baseLocation': {"content":"<div>\n    <h3>Mossel Bay<\/h3>\n    <p><strong>Station number: <\/strong>15<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5954\">082 990 5954<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.180583, 22.1488<\/p>\n    <\/div>\n"},
+    '75119-baseLocation': {"content":"<div>\n    <h3>Mykonos<\/h3>\n    <p><strong>Station number: <\/strong>4<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5966\">082 990 5966<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-33.047367, 18.0398<\/p>\n    <p><a href=\"https:\/\/www.nsri.org.za\/rescue\/base\/mykonos\/\">View Base<\/a><\/p><\/div>\n"},
+    '75034-baseLocation': {"content":"<div>\n    <h3>Oyster Bay<\/h3>\n    <p><strong>Station number: <\/strong>36<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5968\">082 990 5968<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.1696729, 24.653434<\/p>\n    <\/div>\n"},
+    '75061-baseLocation': {"content":"<div>\n    <h3>Plettenberg Bay<\/h3>\n    <p><strong>Station number: <\/strong>14<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5975\">082 990 5975<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.058333, 23.378<\/p>\n    <\/div>\n"},
+    '75025-baseLocation': {"content":"<div>\n    <h3>Port Alfred<\/h3>\n    <p><strong>Station number: <\/strong>11<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5971\">082 990 5971<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-33.594933, 26.89095<\/p>\n    <\/div>\n"},
+    '75001-baseLocation': {"content":"<div>\n    <h3>Port Edward<\/h3>\n    <p><strong>Station number: <\/strong>32<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990-5951\">082 990-5951<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-31.048217, 30.231167<\/p>\n    <\/div>\n"},
+    '74979-baseLocation': {"content":"<div>\n    <h3>Port Nolloth<\/h3>\n    <p><strong>Station number: <\/strong>43<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:063 698 8971\">063 698 8971<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-29.23840901, 16.92887244<\/p>\n    <\/div>\n"},
+    '75019-baseLocation': {"content":"<div>\n    <h3>Port St Johns (Aux)<\/h3>\n    <p><strong>Station number: <\/strong>28<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 550 5430\">082 550 5430<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-31.5300217, 29.464359<\/p>\n    <\/div>\n"},
+    '74985-baseLocation': {"content":"<div>\n    <h3>Richards Bay<\/h3>\n    <p><strong>Station number: <\/strong>19<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5949\">082 990 5949<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-28.791633, 32.08365<\/p>\n    <\/div>\n"},
+    '74995-baseLocation': {"content":"<div>\n    <h3>Rocky Bay<\/h3>\n    <p><strong>Station number: <\/strong>39<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:072 652 5158\">072 652 5158<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-30.334283, 30.733833<\/p>\n    <\/div>\n"},
+    '74998-baseLocation': {"content":"<div>\n    <h3>Shelly Beach<\/h3>\n    <p><strong>Station number: <\/strong>20<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5950\">082 990 5950<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-30.808517, 30.412217<\/p>\n    <\/div>\n"},
+    '47-baseLocation': {"content":"<div>\n    <h3>Simon&#039;s Town<\/h3>\n    <p><strong>Station number: <\/strong>10<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5965\">082 990 5965<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.192283, 18.434367<\/p>\n    <\/div>\n"},
+    '75031-baseLocation': {"content":"<div>\n    <h3>St Francis Bay<\/h3>\n    <p><strong>Station number: <\/strong>21<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5969\">082 990 5969<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.184333, 24.8523<\/p>\n    <\/div>\n"},
+    '74982-baseLocation': {"content":"<div>\n    <h3>St Lucia<\/h3>\n    <p><strong>Station number: <\/strong>40<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:063 699 2722\">063 699 2722<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-28.3726019, 32.4141631<\/p>\n    <\/div>\n"},
+    '75073-baseLocation': {"content":"<div>\n    <h3>Still Bay<\/h3>\n    <p><strong>Station number: <\/strong>31<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5978\">082 990 5978<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.385733, 21.423917<\/p>\n    <\/div>\n"},
+    '132949-baseLocation': {"content":"<div>\n    <h3>Storms River (Aux)<\/h3>\n    <p><strong>Station number: <\/strong>46<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:076 092 2465\">076 092 2465<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.02293034, 23.89860993<\/p>\n    <\/div>\n"},
+    '75094-baseLocation': {"content":"<div>\n    <h3>Strandfontein<\/h3>\n    <p><strong>Station number: <\/strong>16<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 6753\">082 990 6753<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.086742, 18.5582613<\/p>\n    <\/div>\n"},
+    '132945-baseLocation': {"content":"<div>\n    <h3>Strandfontein (Matzikama)<\/h3>\n    <p><strong>Station number: <\/strong>45<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:066 586 7992\">066 586 7992<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-31.451409, 18.133488<\/p>\n    <\/div>\n"},
+    '75107-baseLocation': {"content":"<div>\n    <h3>Table Bay<\/h3>\n    <p><strong>Station number: <\/strong>3<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5963\">082 990 5963<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-33.905636, 18.420681<\/p>\n    <p><a href=\"https:\/\/www.nsri.org.za\/rescue\/base\/table-bay\/\">View Base<\/a><\/p><\/div>\n"},
+    '75085-baseLocation': {"content":"<div>\n    <h3>Theewaterskloof<\/h3>\n    <p><strong>Station number: <\/strong>38<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:072 446 6344\">072 446 6344<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.176, 19.262533<\/p>\n    <\/div>\n"},
+    '219104-baseLocation': {"content":"<div>\n    <h3>Umhlanga<\/h3>\n    <p><strong>Station number: <\/strong>50<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5948\">082 990 5948<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-29.725979, 31.087771<\/p>\n    <\/div>\n"},
+    '74976-baseLocation': {"content":"<div>\n    <h3>Vaal Dam<\/h3>\n    <p><strong>Station number: <\/strong>22<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:083 637 1257\">083 637 1257<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-26.896063, 28.115053<\/p>\n    <\/div>\n"},
+    '75067-baseLocation': {"content":"<div>\n    <h3>Wilderness<\/h3>\n    <p><strong>Station number: <\/strong>23<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5955\">082 990 5955<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-33.9952, 22.580567<\/p>\n    <\/div>\n"},
+    '74958-baseLocation': {"content":"<div>\n    <h3>Witbank Dam<\/h3>\n    <p><strong>Station number: <\/strong>35<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:060 962 2620\">060 962 2620<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-25.9093, 29.308733<\/p>\n    <\/div>\n"},
+    '75076-baseLocation': {"content":"<div>\n    <h3>Witsand<\/h3>\n    <p><strong>Station number: <\/strong>33<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5957\">082 990 5957<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-34.391333, 20.837833<\/p>\n    <\/div>\n"},
+    '75116-baseLocation': {"content":"<div>\n    <h3>Yzerfontein<\/h3>\n    <p><strong>Station number: <\/strong>34<\/p>\n    <p><strong>Emergency number: <\/strong><a href=\"tel:082 990 5974\">082 990 5974<\/a><\/p>\n    <p><strong>Coordinates: <\/strong>-33.346, 18.149833<\/p>\n    <\/div>\n"},
+};
+addEventListener('load', function () {googleMaps.init('base-finder', null)});
+var markers = [];
+if(!markers.hasOwnProperty('easterncape')){
+                markers['easterncape'] = [];
+            }
+            markers['easterncape'].push('75022-baseLocation');
+if(!markers.hasOwnProperty('easterncape')){
+                markers['easterncape'] = [];
+            }
+            markers['easterncape'].push('75028-baseLocation');
+if(!markers.hasOwnProperty('easterncape')){
+                markers['easterncape'] = [];
+            }
+            markers['easterncape'].push('75037-baseLocation');
+if(!markers.hasOwnProperty('easterncape')){
+                markers['easterncape'] = [];
+            }
+            markers['easterncape'].push('132941-baseLocation');
+if(!markers.hasOwnProperty('easterncape')){
+                markers['easterncape'] = [];
+            }
+            markers['easterncape'].push('132952-baseLocation');
+if(!markers.hasOwnProperty('easterncape')){
+                markers['easterncape'] = [];
+            }
+            markers['easterncape'].push('75034-baseLocation');
+if(!markers.hasOwnProperty('easterncape')){
+                markers['easterncape'] = [];
+            }
+            markers['easterncape'].push('75025-baseLocation');
+if(!markers.hasOwnProperty('easterncape')){
+                markers['easterncape'] = [];
+            }
+            markers['easterncape'].push('75019-baseLocation');
+if(!markers.hasOwnProperty('easterncape')){
+                markers['easterncape'] = [];
+            }
+            markers['easterncape'].push('75031-baseLocation');
+if(!markers.hasOwnProperty('easterncape')){
+                markers['easterncape'] = [];
+            }
+            markers['easterncape'].push('132949-baseLocation');
+if(!markers.hasOwnProperty('freestate')){
+                markers['freestate'] = [];
+            }
+            markers['freestate'].push('432775-baseLocation');
+if(!markers.hasOwnProperty('freestate')){
+                markers['freestate'] = [];
+            }
+            markers['freestate'].push('74976-baseLocation');
+if(!markers.hasOwnProperty('gauteng')){
+                markers['gauteng'] = [];
+            }
+            markers['gauteng'].push('74973-baseLocation');
+if(!markers.hasOwnProperty('kwazulu-natal')){
+                markers['kwazulu-natal'] = [];
+            }
+            markers['kwazulu-natal'].push('74988-baseLocation');
+if(!markers.hasOwnProperty('kwazulu-natal')){
+                markers['kwazulu-natal'] = [];
+            }
+            markers['kwazulu-natal'].push('74992-baseLocation');
+if(!markers.hasOwnProperty('kwazulu-natal')){
+                markers['kwazulu-natal'] = [];
+            }
+            markers['kwazulu-natal'].push('75001-baseLocation');
+if(!markers.hasOwnProperty('kwazulu-natal')){
+                markers['kwazulu-natal'] = [];
+            }
+            markers['kwazulu-natal'].push('74985-baseLocation');
+if(!markers.hasOwnProperty('kwazulu-natal')){
+                markers['kwazulu-natal'] = [];
+            }
+            markers['kwazulu-natal'].push('74995-baseLocation');
+if(!markers.hasOwnProperty('kwazulu-natal')){
+                markers['kwazulu-natal'] = [];
+            }
+            markers['kwazulu-natal'].push('74998-baseLocation');
+if(!markers.hasOwnProperty('kwazulu-natal')){
+                markers['kwazulu-natal'] = [];
+            }
+            markers['kwazulu-natal'].push('74982-baseLocation');
+if(!markers.hasOwnProperty('kwazulu-natal')){
+                markers['kwazulu-natal'] = [];
+            }
+            markers['kwazulu-natal'].push('219104-baseLocation');
+if(!markers.hasOwnProperty('mpumalanga')){
+                markers['mpumalanga'] = [];
+            }
+            markers['mpumalanga'].push('74958-baseLocation');
+if(!markers.hasOwnProperty('northwest')){
+                markers['northwest'] = [];
+            }
+            markers['northwest'].push('74968-baseLocation');
+if(!markers.hasOwnProperty('northerncape')){
+                markers['northerncape'] = [];
+            }
+            markers['northerncape'].push('74979-baseLocation');
+if(!markers.hasOwnProperty('other')){
+                markers['other'] = [];
+            }
+            markers['other'].push('520618-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75110-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75079-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75104-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75091-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75082-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75101-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75088-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75064-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75098-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('74964-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75113-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75070-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75119-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75061-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('47-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('432984-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75073-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75094-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('132945-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75107-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75085-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75067-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75076-baseLocation');
+if(!markers.hasOwnProperty('westerncape')){
+                markers['westerncape'] = [];
+            }
+            markers['westerncape'].push('75116-baseLocation');
+$(document).ready(function ($) {
+        var map = null;
+
+        setTimeout(function() {
+            map = googleMaps.getMap('base-finder');
+        }, 2000);
+
+        filterMarkers = function (prov) {
+            if ($(window).width() > 960) {
+                map.zoom(5);
+                map.hideMarker('*');
+                var province = prov.getAttribute("data-value");
+                for (i = 0; i < markers[province].length; i++) {
+                    map.showMarker(markers[province][i]);
+                }
+            }
+        }
+
+        resetMap = function() {
+            map.showMarker('*');
+        }
+
+    });

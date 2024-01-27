@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <kml xmlns="http://www.opengis.net/kml/2.2">
+        <Document>
+            <name>Locations</name>
+            <description>Exported Locations</description>
+            <Placemark>
+                <name>Kleinmond Lagoon Bridge 42-27</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>19.0373592,-34.3408457,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Kleinmond Main Beach 42-25</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>19.0376486,-34.3412517,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Preekboom 42-04</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>19.0364928,-34.3412722,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Main Beach Lifesavers Station 42-03</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>19.0368042,-34.3423213,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Lagoon Mouth Parking  42-48</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>19.0369674,-34.3428559,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Drievis Tidal Pool 42-06</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>19.034004517566,-34.3443622592103,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Parking Area (Near Malherbe Stoel) 17-23</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>19.0317733,-34.3444143,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Beach Road btw 6th & 7th Street 42-8</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>19.0261129982493,-34.3445036074233,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Kleinmond Slipway 42-38</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>19.0135786,-34.3458132,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Gustav Adolf Shipwreck Graves 42-??</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>19.0014012,-34.3437285,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Palmiet Day Camp 42-??</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>18.9948902,-34.3409659,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Island Palmiet Lagoon 42-26</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>18.9952248252793,-34.3423898962235,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Old Boat Club Slipway Picnic Spot 42-39</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>18.9915057,-34.3381631,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Palmiet Bridge 42-</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>18.990958981267,-34.3304418457239,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>PROPOSED NEW BUOY</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>19.0405717981542,-34.3408782651009,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>PROPOSED NEW BUOY</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>18.9662486174197,-34.3609419552472,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>PROPOSED NEW BUOY</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>18.990537355799,-34.3302845651116,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>17-25 MISSING</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>18.891111,-34.373333,0</coordinates>
+                </Point>
+            </Placemark>
+            <Placemark>
+                <name>Fisherhaven Public Slipway (TO REPLACE)</name>
+                <description>Marker Description</description>
+                <Point>
+                    <coordinates>19.124283,-34.3554749,0</coordinates>
+                </Point>
+            </Placemark>
+        </Document>
+    </kml>

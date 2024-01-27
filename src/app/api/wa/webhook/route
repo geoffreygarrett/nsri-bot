@@ -1,0 +1,549 @@
+import {NextRequest, NextResponse} from 'next/server'
+import {cookies} from 'next/headers'
+import {createRouteHandlerClient, SupabaseClient} from '@supabase/auth-helpers-nextjs'
+import {Database, Tables, TablesUpdate} from "@/types/supabase";
+import twilio from 'twilio';
+import {SMSFormData} from '@/types';
+import {parseAndValidateTwilioRequest} from "@/code/twilio";
+import {convertKeysToSnakeCase} from "@/code/utils";
+
+export const dynamic = 'force-dynamic' // defaults to auto
+
+
+const RESCUE_BUOYS = process.env.RESCUE_BUOY_TABLE_NAME || `rescue_buoys`;
+const MESSAGE_RECEIVED = process.env.MESSAGE_RECEIVED_TABLE_NAME || `messages_received`;
+const MESSAGE_SENT = process.env.MESSAGE_SENT_TABLE_NAME || `messages_sent`;
+
+
+// define base class for SendAndWaitForResponse
+class SendAndWaitForResponse {
+
+    supabase: SupabaseClient<Database>;
+    client: twilio.Twilio;
+    message_params: Record<string, string> = {};
+
+    // variables:
+
+    constructor(supabase: SupabaseClient<Database>, client: twilio.Twilio) {
+        this.supabase = supabase;
+        this.client = client;
+    }
+
+    // send message
+    // async sendMessage(to: string, body: string) {
+    //     const messageResponse = await this.client.messages.create({
+    //         body: body,
+    //         from: `whatsapp:${SIGNAL_PHONE_NUMBER}`,
+    //         to: to // Replace with a dynamic recipient if needed
+    //     });
+    //
+    //     const {data, error} = await this.supabase.from(MESSAGE_SENT)
+    //         .insert(convertMessageSent(messageResponse))
+    //         .single();
+    //
+    //     if (error) {
+    //         throw new Error(`Supabase error: ${error.message} [${error.code}]`);
+    //     }
+    //
+    //     // if (error) {
+    //     //     console.error('Supabase error:', error.message);
+    //     //     return new NextResponse(`Supabase error: ${error.message}`, {status: 500});
+    //     // }
+    //     return {data, error};
+    // }
+
+    // callback when response is received
+    async callback() {
+        // callback
+    }
+
+    // first reply when triggered
+    async reply() {
+        // reply
+    }
+
+    renderTemplate(template: string, params: Record<string, string>) {
+        // render template
+        return template.replace(/\{\{(\d+)\}\}/g, (match, p1) => params[p1]);
+    }
+
+    // used to check message content for trigger
+    test(params: Record<string, string>) {
+    }
+}
+
+const SIGNAL_PHONE_NUMBER = process.env.NEXT_PUBLIC_TWILIO_PHONE_NUMBER || ``;
+
+
+enum Report {
+    OK = "OK",
+    MISSING = "MISSING",
+    USED = "USED",
+    REQUIRES_ATTENTION = "REQUIRES ATTENTION"
+}
+
+import {EquipmentStatus} from "@/components/types";
+import {reverse_geocode} from "@/code/reverse_geocode";
+import {getMessage, sendMessage} from "@/server/database";
+import {getBaseUrl} from "@/code/domain";
+import {BuoyStatus} from "@prisma/client";
+
+
+interface TableOperation {
+    operation: string;
+    schema: string;
+    name: string;
+    columns: string[];
+    values: any[][];
+}
+
+
+// Action Interfaces
+interface Action {
+    execute(params: Record<string, string>): Promise<void>;
+}
+
+// Concrete Actions
+class UpdateStatusAction implements Action {
+
+    supabase: SupabaseClient<Database>;
+
+    button_mapping: Record<Report, TablesUpdate<`rescue_buoys`>> = {
+        [Report.OK]:
+            {
+                status: BuoyStatus.OK,
+            }
+        ,
+        [Report.MISSING]:
+            {
+                status: BuoyStatus.MISSING,
+            }
+        ,
+        [Report.USED]:
+            {
+                status: BuoyStatus.ATTENTION,
+            }
+        ,
+        [Report.REQUIRES_ATTENTION]:
+            {
+                status: BuoyStatus.ATTENTION,
+            }
+
+    };
+
+    constructor(supabase: SupabaseClient) {
+        this.supabase = supabase;
+    }
+
+    async execute(params: Record<string, string>) {
+        const updateData = this.button_mapping[params.button_text as Report];
+        const {data, error} = await this.supabase
+            .from(RESCUE_BUOYS)
+            .update(updateData)
+            .eq("id", params.id);
+        if (error) throw error;
+    }
+}
+
+async function downloadImage(url: string) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Image download failed');
+    return response.blob();
+}
+
+class UpdatePhotoAction implements Action {
+
+    supabase: SupabaseClient;
+
+    constructor(supabase: SupabaseClient) {
+        this.supabase = supabase;
+    }
+
+    async execute(params: Record<string, string>): Promise<void> {
+
+        const path = `public/${params.id}/${params.message_sid}.png`;
+
+        // Check if bucket exists
+        const {data: getBucketData, error: getBucketError} = await this.supabase
+            .storage
+            .getBucket(RESCUE_BUOYS);
+        console.log("getBucketData", getBucketData);
+        console.log("getBucketError", getBucketError);
+
+        if (getBucketData?.public === false) {
+            const {data: updateBucketData, error: updateBucketError} = await this.supabase
+                .storage
+                .updateBucket(RESCUE_BUOYS, {public: true});
+
+            console.log("updateBucketData", updateBucketData);
+            console.log("updateBucketError", updateBucketError);
+        }
+
+        // Create bucket if it doesn't exist
+        if (getBucketError?.message === 'Bucket not found') {
+            // Create bucket if it doesn't exist
+            const
+                {
+                    data: createBucketData,
+                    error: createBucketError
+                } = await this.supabase
+                    .storage
+                    .createBucket(RESCUE_BUOYS, {public: true});
+
+            console.log("createBucketData", createBucketData);
+            console.log("createBucketError", createBucketError);
+
+            if (createBucketError) {
+                throw createBucketError;
+            }
+        }
+
+        // console.log("getBucketData", getBucketData);
+        // console.log("getBucketError", getBucketError.toJSON());
+        // console.log("getBucketError.message", getBucketError?.message);
+        // console.log("getBucketError.cause", getBucketError?.cause);
+        // console.log("getBucketError.stack", getBucketError?.stack);
+        // console.log("getBucketError.name", getBucketError?.name);
+        // console.log("getBucketError.name", getBucketError?.name);
+
+        //
+        const imageBlob = await downloadImage(params.media_url0);
+
+        // Step 1: Upload the Image (Assuming params.avatarFile is the File object)
+        const response = await this.supabase
+            .storage
+            .from(RESCUE_BUOYS)
+            .upload(
+                path,
+                imageBlob,
+                {
+                    cacheControl: '3600',
+                    upsert: false
+                });
+
+        console.log("response", response);
+
+        if (response.error) throw response.error;
+
+        // if (response.error) {
+        //     console.error('Upload error:', response.error.message);
+        //     return new NextResponse(`Upload error: ${response.error.message}`, {status: 500});
+        // }
+
+        // Step 2: Get the Public URL
+        const urlResponse = this.supabase
+            .storage
+            .from(RESCUE_BUOYS)
+            .getPublicUrl(path);
+
+        // if (urlResponse.error) {
+        //     console.error('URL Retrieval error:', urlResponse.error.message);
+        //     return new NextResponse(`URL Retrieval error: ${urlResponse.error.message}`, {status: 500});
+        // }
+
+        const publicURL = urlResponse.data.publicUrl;
+
+        // Step 3: Update the Database
+        const {
+            data, error
+        } = await this.supabase
+            .from(RESCUE_BUOYS)
+            .update({image_url: publicURL})
+            .eq('id', params.id)
+            .single();
+
+        if (error) throw error;
+
+        // if (error) {
+        //     console.error('Supabase error:', error.message);
+        //     return new NextResponse(`Supabase error: ${error.message}`, {status: 500});
+        // }
+    }
+}
+
+class CreateBuoyAction implements Action {
+
+    supabase: SupabaseClient<Database>;
+
+    constructor(supabase: SupabaseClient) {
+        this.supabase = supabase;
+    }
+
+    async execute(params: Record<string, string>): Promise<void> {
+        const reverse_geocode_result = await reverse_geocode(Number(params.latitude), Number(params.longitude), process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ``);
+        console.log("reverse_geocode_result", reverse_geocode_result);
+        const {data, error} = await this.supabase
+            .from(RESCUE_BUOYS)
+            .insert({
+                pbr_id: "42-78",
+                station_id: 42,
+                name: "PROPOSED BUOY",
+                lat: params.latitude,
+                lng: params.longitude,
+                alt: 0,
+                formatted_address: reverse_geocode_result,
+                town: "",
+                town_code: "",
+                status: EquipmentStatus.PROPOSED,
+                updated_at: new Date(),
+
+            })
+            .single();
+
+        if (error) throw error;
+    }
+}
+
+class UpdateBuoyAction implements Action {
+
+    supabase: SupabaseClient<Database>;
+
+    constructor(supabase: SupabaseClient) {
+        this.supabase = supabase;
+    }
+
+    async execute(params: Record<string, string>): Promise<void> {
+        const reverse_geocode_result = await reverse_geocode(Number(params.latitude), Number(params.longitude), process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ``);
+        console.log("reverse_geocode_result", reverse_geocode_result);
+        const {data, error} = await this.supabase
+            .from(RESCUE_BUOYS)
+            .update({
+                lat: params.latitude,
+                lng: params.longitude,
+                formatted_address: reverse_geocode_result,
+                updated_at: new Date(),
+            })
+            .eq('id', params.id)
+            .single();
+
+        if (error) throw error;
+    }
+
+}
+
+// Context Handler
+// class ActionHandler {
+//     private actions: Map<string, Action>;
+//
+//     constructor() {
+//         this.actions = new Map();
+//         this.actions.set('updateStatus', new UpdateStatusAction());
+//         this.actions.set('createBuoy', new CreateBuoyAction());
+//         this.actions.set('updatePhoto', new UpdatePhotoAction());
+//     }
+//
+//     async handle(params: Record<string, string>) {
+//         if (params.button_text && Object.values(Report).includes(params.button_text as Report)) {
+//             await this.actions.get('updateStatus')?.execute(params);
+//         } else if (params.latitude && params.longitude) {
+//             await this.actions.get('createBuoy')?.execute(params);
+//         } else {
+//             // Handle invalid or incomplete params
+//         }
+//     }
+// }
+
+
+class PinkRescueBuoyPlain extends SendAndWaitForResponse {
+
+    prb_id: string;
+    button_response: Report;
+    template = `Update on *{{1}}* Rescue Buoy (ID: *{{2}}*) at *{{3}}*. Please report the current status below:`;
+    name = "pink_rescue_buoy_plain";
+
+    constructor(supabase: SupabaseClient<Database>, client: twilio.Twilio) {
+        super(supabase, client);
+    }
+
+    async sendInitialMessage() {
+        try {
+            const data = await fetch(`${getBaseUrl()}/api/prb/${this.prb_id}`, {method: 'GET'})
+                .then(res => res.json())
+                .catch(err => console.log(err));
+
+            if (!data) {
+                throw new Error('No data found');
+            }
+
+            const messageBody = this.renderTemplate(this.template, {
+                1: data.name,
+                2: data.id,
+                3: data.formatted_address
+            });
+
+            await sendMessage(
+                this.message_params["from"],
+                messageBody,
+                this.supabase,
+                this.client);
+
+        } catch (error) {
+            console.error('Error:', error.message);
+            return new NextResponse(`Error: ${error.message}`, {status: error.status || 500});
+        }
+    }
+
+    async handle(params: Record<string, string>) {
+        console.log("params", params);
+        if (this.test(params)) {
+            await this.sendInitialMessage();
+        } else if (params["original_replied_message_sid"] && params["button_payload"]) {
+            const originalRepliedMessage = await getMessage(
+                params["original_replied_message_sid"],
+                this.supabase);
+            console.log("originalRepliedMessage", originalRepliedMessage);
+
+            this.test(originalRepliedMessage.data);
+            const updateStatusAction = new UpdateStatusAction(this.supabase);
+            await updateStatusAction.execute({...params, id: this.prb_id});
+            console.log("originalRepliedMessage", originalRepliedMessage);
+            this.button_response = params["body"] as Report;
+            await this.callback();
+        } else if (params["original_replied_message_sid"] && params["media_url0"]) {
+            console.log("params", params);
+            const originalRepliedMessage = await getMessage(
+                params["original_replied_message_sid"],
+                this.supabase);
+            console.log("originalRepliedMessage", originalRepliedMessage);
+            this.test(originalRepliedMessage.data);
+            const updatePhotoAction = new UpdatePhotoAction(this.supabase);
+            await updatePhotoAction.execute({...params, id: this.prb_id});
+            await this.callback();
+        } else if (params["latitude"] && params["longitude"]) {
+
+            if (!params["original_replied_message_sid"]) {
+                const createBuoyAction = new CreateBuoyAction(this.supabase);
+                await createBuoyAction.execute(params);
+            }
+
+            const originalRepliedMessage = await getMessage(
+                params["original_replied_message_sid"],
+                this.supabase);
+            console.log("originalRepliedMessage", originalRepliedMessage);
+
+            this.test(originalRepliedMessage.data);
+            const updateBuoyAction = new UpdateBuoyAction(this.supabase);
+            await updateBuoyAction.execute({...params, id: this.prb_id});
+
+        }
+    }
+
+    regexID(inputString: string) {
+        const idRegex = /(\d+-\d+)/;
+        const match = inputString.match(idRegex);
+        console.log("match", match);
+        return match ? match[1] : null; // match[1] contains the first capturing group
+    }
+
+    parseID(inputString: string | null) {
+        if (!inputString) {
+            return null;
+        }
+        const idParts = inputString.split("-");
+        return `${idParts[0].padStart(2, "0")}-${idParts[1].padStart(4, "0")}`;
+    }
+
+    test(params: Record<string, string>): boolean {
+        const rawID = this.regexID(params["body"]);
+        console.log("rawID", rawID);
+        this.prb_id = this.parseID(rawID);
+        console.log("this.prb_id", this.prb_id);
+        this.message_params = params
+        return this.prb_id !== null;
+    }
+}
+
+
+// Helper function to parse basic auth header
+function parseBasicAuth(authHeader: string) {
+    const authValue = authHeader.split(" ")[1];
+    return atob(authValue).split(":");
+}
+
+export async function POST(request: NextRequest) {
+    // Create Supabase client
+    const cookieStore = cookies()
+    const supabase = createRouteHandlerClient<Database>({cookies: () => cookieStore})
+    const basicAuth = request.headers.get("authorization");
+    if (basicAuth) {
+        const [phone, pwd] = parseBasicAuth(basicAuth);
+        const {data: d1, error: e1} = await supabase.auth.getSession();
+        if (!d1.session) {
+            await supabase.auth.signInWithPassword({
+                phone: phone,
+                password: pwd,
+            })
+        }
+        const {data, error} = await supabase.auth.getSession();
+        console.log("data", data);
+        console.log("error", error);
+        const {
+            data: userData,
+            error: userError
+        } = await supabase.auth.getUser();
+        console.log("user", userData);
+
+    } else {
+        return new NextResponse("Unauthorized", {
+            status: 401,
+            headers: {
+                "WWW-Authenticate": 'Basic realm="Secure Area"',
+            },
+        });
+    }
+
+    // print cookies
+    // console.log("cookies", cookies);
+    // console.log(request.headers);
+
+    // Create Twilio client
+    const client = twilio(
+        process.env.REACT_APP_TWILIO_ACCOUNT_SID,
+        process.env.REACT_APP_TWILIO_AUTH_TOKEN);
+
+    try {
+
+        // Parse form data
+        const params = await parseAndValidateTwilioRequest(request);
+
+        console.log("params", params);
+        // const {
+        //     data: usersData,
+        //     error: usersError
+        // } = await supabase.auth.admin.listUsers()
+
+        // console.log("usersData", usersData);
+        // console.log("usersError", usersError);
+
+        // Insert into 'received_messages' table
+        const {
+            data: insertData,
+            error: insertError
+        } = await supabase
+            .from(MESSAGE_RECEIVED)
+            .insert(params);
+
+        if (insertError) {
+            console.error('Supabase error:', insertError);
+            return new NextResponse(`Supabase error: ${insertError.message}`, {status: 500});
+        }
+
+        const handlers = [
+            new PinkRescueBuoyPlain(supabase, client),
+            // add more handlers here
+        ];
+
+        for (let handler of handlers) {
+            console.log("handler.test(params)", handler.test(params));
+            handler.handle(params);
+        }
+
+        // Send response
+        return new NextResponse('', {status: 200});
+
+    } catch (error) { // Catch all errors
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Error in Twilio webhook handler:', errorMessage);
+        return new NextResponse(errorMessage, {status: 500});
+    }
+}

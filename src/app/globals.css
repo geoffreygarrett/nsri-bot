@@ -1,36 +1,367 @@
+/*@tailwind base;*/
+/*@tailwind components;*/
+/*@tailwind utilities;*/
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/*.bg-primary {*/
+/*    @apply bg-zinc-100 dark:bg-black;*/
+/*}*/
+
+/*.bg-secondary {*/
+/*    @apply bg-zinc-300 dark:bg-zinc-800;*/
+/*}*/
+
+/*.bg-primary-fade {*/
+/*    @apply from-zinc-100 dark:from-black;*/
+/*}*/
+
+@keyframes move-forever {
+    0% {
+        transform: translate3d(-90px, 0, 0);
+    }
+    100% {
+        transform: translate3d(85px, 0, 0);
+    }
+}
+
+.opt-blur {
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    -webkit-transform: translate3d(0, 0, 0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    transform: translate3d(0, 0, 0);
+    transform: translateZ(0);
+}
+
+body {
+    @apply h-[100dvh];
+    /* Set height to 100% of the viewport height */
+    @apply overscroll-none;
+    /* Disable pull-to-refresh and overscroll glow effect */
+    /*@apply bg-primary;*/
+    /*    text color default */
+    /*@apply hp:bg-green-500;*/
+    @apply text-gray-900 dark:text-gray-300;
+}
+
+/* This removes the sharp edged highlights on button presses */
+/** {*/
+/*    -webkit-tap-highlight-color: transparent;*/
+/*}*/
+
+
+html {
+    /*@apply hp:bg-white;*/
+    @apply h-[100dvh];
+}
+
+
+.hp .hp\:glass {
+    @apply bg-zinc-100 dark:bg-black;
+    @apply transform-gpu bg-white dark:bg-zinc-800 bg-opacity-40 backdrop-blur-md rounded drop-shadow-lg dark:bg-opacity-30 border-opacity-30 dark:border-opacity-30;
+}
+
+/*.hp .hp\:bg-green-500 {*/
+/*    @apply bg-green-500;*/
+/*}*/
+
+
+/* MAP */
+@layer utilities {
+    @keyframes pulse-grow {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.2);
+            opacity: 0.7;
+        }
+    }
+    .animate-pulse-grow {
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+}
+
+/* AUTH */
+.auth-form-message {
+    /* text */
+    @apply text-red-700 dark:text-red-300;
+}
+
+.auth-form-label {
+    /* text */
+    @apply text-sm font-medium text-gray-700 dark:text-gray-300;
+}
+
+.auth-form-description {
+    /* text */
+    @apply text-gray-500 dark:text-gray-500;
+
+    /* margin */
+    @apply mt-2;
+
+    /* font */
+    @apply text-sm font-medium;
+}
+
+/*.auth-form-input {*/
+/*    !* background *!*/
+/*    @apply bg-white dark:bg-gray-700;*/
+
+/*    !* border *!*/
+/*    @apply border border-gray-300 dark:border-gray-600;*/
+
+/*    !* text *!*/
+/*    @apply text-gray-900 dark:text-gray-300 text-sm font-medium;*/
+/*}*/
+
+.auth-form-button {
+    /* background */
+    @apply bg-blue-500 dark:bg-blue-500;
+
+    /* border */
+    @apply border border-transparent;
+
+    /* text */
+    @apply text-white;
+
+    /* margin */
+    @apply mt-4;
+
+    /* padding */
+    @apply py-2 px-4;
+
+    /* font */
+    @apply text-sm font-medium;
+
+    /* hover */
+    @apply hover:bg-blue-600 dark:hover:bg-blue-600;
+}
+
+
+/* WAVES */
+/*.waves {*/
+/*    position:relative;*/
+/*    width: 100%;*/
+/*    height:15vh;*/
+/*    margin-bottom:-7px; !*Fix for safari gap*!*/
+/*    min-height:100px;*/
+/*    max-height:150px;*/
+/*}*/
+
+/* Animation */
+/* MAP */
+@layer utilities {
+    @keyframes wave {
+        /*0% {*/
+        /*    transform: translateX(0) translateZ(0) scaleY(1)*/
+        /*}*/
+        /*50% {*/
+        /*    transform: translateX(-25%) translateZ(0) scaleY(0.55)*/
+        /*}*/
+        /*100% {*/
+        /*    transform: translateX(-50%) translateZ(0) scaleY(1)*/
+        /*}*/
+        0% {
+            transform: translate3d(-90px, 0, 0);
+        }
+        100% {
+            transform: translate3d(85px, 0, 0);
+        }
+    }
+
+    .animate-wave {
+        animation: wave 25s cubic-bezier(.55, .5, .45, .5) infinite;
+    }
+}
+
+.parallax > use {
+    animation: move-forever 25s cubic-bezier(.55, .5, .45, .5) infinite;
+}
+
+.parallax > use:nth-child(1) {
+    animation-delay: -2s;
+    animation-duration: 7s;
+}
+
+.parallax > use:nth-child(2) {
+    animation-delay: -3s;
+    animation-duration: 10s;
+}
+
+.parallax > use:nth-child(3) {
+    animation-delay: -4s;
+    animation-duration: 13s;
+}
+
+.parallax > use:nth-child(4) {
+    animation-delay: -5s;
+    animation-duration: 20s;
+}
+
+
+@keyframes move-forever {
+    0% {
+        transform: translate3d(-90px, 0, 0);
+    }
+    100% {
+        transform: translate3d(85px, 0, 0);
+    }
+}
+
+/*.gm-style-iw {*/
+/*    width: 350px !important;*/
+/*    top: 0 !important;*/
+/*    left: 0 !important;*/
+/*    background-color: #fff;*/
+/*    box-shadow: 0 1px 6px rgba(178, 178, 178, 0.6);*/
+/*    border: 1px solid rgba(72, 181, 233, 0.6);*/
+/*    border-radius: 2px 2px 0 0;*/
+/*}*/
+
+/* GOOGLE MAPS STYLING */
+.gm-style-iw-d {
+    overflow: hidden !important;
+    margin: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    padding: 0 !important;
+    @apply bg-white dark:bg-gray-700;
+}
+
+
+.gm-style-iw-c {
+    overflow: hidden !important;
+    margin: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    padding: 0 !important;
+    @apply bg-white dark:bg-gray-700;
+}
+
+.gm-style iframe + div {
+    border: none !important;
+}
+
+
+.gm-style .gm-style-iw-tc::after {
+    @apply border-gray-300 dark:border-gray-600;
+    @apply bg-white dark:bg-gray-700;
+    @apply border-slate-200 bg-white text-slate-950 shadow dark:border-slate-800 dark:bg-slate-950;
+    /*@apply shadow-2xl;*/
+}
+
+
+/* HIDE CLOSE BUTTON */
+.gm-style-iw > button {
+    display: none !important;
+}
+
+/* TOUCHSCREEN */
+/* pointer-coarse */
+@media (pointer: coarse) {
+    .pointer-coarse {
+        display: block;
+    }
+
+    .pointer-fine {
+        display: none;
+    }
+}
+
+/* pointer-fine */
+@media (pointer: fine) {
+    .pointer-coarse {
+        display: none;
+    }
+
+    .pointer-fine {
+        display: block;
+    }
+}
+
+/*!* pointer-none *!*/
+/*@media (pointer: none) { ... }*/
+
+/*!* hover-hover *!*/
+/*@media (hover: hover) { ... }*/
+
+/*!* hover-none *!*/
+/*@media (hover: none) { ... }*/
+
+
+/*.InfoWindow {*/
+/*    !* background *!*/
+/*    @apply bg-white dark:bg-gray-700;*/
+
+/*    !* border *!*/
+/*    @apply border border-gray-300 dark:border-gray-600;*/
+
+/*    !* text *!*/
+/*    @apply text-gray-900 dark:text-gray-300 text-sm font-medium;*/
+/*}*/
+
+
+/*style the annoying little arrow at the bottom*/
+/*.gm-style div div div div div div div div {*/
+/*    background-color: #252525 !important;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    top: 0;*/
+/*    color: #fff;*/
+/*    font-size: 16px;*/
+/*}*/
+
+
+/* REACT SELECT */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --foreground-rgb: 0, 0, 0;
-    --background-start-rgb: 214, 219, 220;
-    --background-end-rgb: 255, 255, 255;
-}
+@layer components {
+    /* .my-react-select-container {
+    } */
+    .my-react-select-container .my-react-select__control {
+        /*@apply rounded-xl;*/
+        @apply bg-white dark:bg-neutral-700 border-2 border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500;
+    }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --foreground-rgb: 255, 255, 255;
-        --background-start-rgb: 0, 0, 0;
-        --background-end-rgb: 0, 0, 0;
+    .my-react-select-container .my-react-select__control--is-focused {
+        @apply rounded-lg;
+        @apply border-neutral-500 hover:border-neutral-500 dark:border-neutral-400 dark:hover:border-neutral-400 shadow-none;
+    }
+
+    .my-react-select-container .my-react-select__menu {
+        @apply bg-neutral-100 dark:bg-neutral-700 border-2 border-neutral-300 dark:border-neutral-600;
+    }
+
+    .my-react-select-container .my-react-select__option {
+        @apply text-neutral-600 dark:text-neutral-200 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-800;
+        @apply focus:bg-neutral-200 dark:focus:bg-neutral-800;
+        @apply rounded-lg;
+    }
+
+    .my-react-select__option--is-focused:not(.my-react-select__option--is-selected) {
+        @apply bg-neutral-200 dark:bg-neutral-800;
+    }
+
+    /* .my-react-select-container .my-react-select__option--is-focused {
+      @apply bg-neutral-200 dark:bg-neutral-800;
+    } */
+    .my-react-select-container .my-react-select__indicator-separator {
+        @apply bg-neutral-400;
+    }
+
+    .my-react-select-container .my-react-select__input-container,
+    .my-react-select-container .my-react-select__placeholder,
+    .my-react-select-container .my-react-select__single-value {
+        @apply text-neutral-600 dark:text-neutral-200;
+        @apply focus:text-neutral-600 dark:focus:text-neutral-200;
     }
 }
-
-body {
-    color: rgb(var(--foreground-rgb));
-    background: linear-gradient(
-            to bottom,
-            transparent,
-            rgb(var(--background-end-rgb))
-    ) rgb(var(--background-start-rgb));
-}
-
-/*body::after {*/
-/*    background-image: url('/404.jpeg'); !* Replace with your image path *!*/
-/*    background-size: cover;*/
-/*    background-position: center;*/
-/*    background-repeat: no-repeat;*/
-/*    opacity: 0; !* Start with 0 opacity *!*/
-/*    transition: opacity 1s ease-in-out; !* Smooth transition for the fade-in effect *!*/
-/*    !*z-index: -100;*!*/
-/*}*/

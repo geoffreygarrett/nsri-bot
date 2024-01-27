@@ -3,13 +3,18 @@ import {Inter} from 'next/font/google'
 import './globals.css'
 import Link from "next/link";
 import React from "react";
+import {Toaster} from "@/components/ui/sonner"
+import {ThemeProvider} from "@/components/layout/theme-provider";
+import {ThemeSwitcher} from "@/components/layout/theme-switcher";
+import Navbar from "@/components/layout/navbar";
+import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 
 const inter = Inter({subsets: ['latin']})
 
 // Metadata configuration
 export const metadata: Metadata = {
-    title: 'NSRI Bot',
-    description: 'Innovative solution for sea rescue operations.',
+    title: 'NSRI App',
+    description: 'Innovative technology for sea rescue operations.',
     icons: {
         icon: [
             {url: '/android-chrome-192x192.png', sizes: '192x192', type: 'image/png'},
@@ -49,15 +54,42 @@ export const metadata: Metadata = {
     // },
 };
 
+import {Database} from "@/types/supabase";
+import {cookies} from "next/headers";
+import AppProviders from "@/app/providers";
+import {cn} from "@/lib/utils";
+import {glassEffect} from "@/constants";
+// const glassEffect = "bg-white bg-opacity-40 backdrop-blur-md rounded drop-shadow-lg dark:bg-opacity-30 border-opacity-30 dark:border-opacity-30";
 
-export default function RootLayout({
-                                       children,
-                                   }: {
+
+// const Example = (props) => {
+//     const [value, setValue] = useState('');
+//
+//     useBeforeunload(value !== '' ? (event) => event.preventDefault() : null);
+//
+//     return (
+//         <input onChange={(event) => setValue(event.target.value)} value={value} />
+//     );
+// };
+
+export default async function RootLayout({
+                                             children,
+                                         }: {
     children: React.ReactNode
 }) {
+
     return (
         <html lang="en">
-        <body className={inter.className}>{children}
+        <body className={inter.className}>
+        <AppProviders>
+            <Navbar
+                className={cn(
+                    // "bg-white dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-800 border-1 shadow-sm",
+                    glassEffect)}/>
+            <main>
+                {children}
+            </main>
+        </AppProviders>
         </body>
         </html>
     )

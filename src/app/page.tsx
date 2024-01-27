@@ -24,19 +24,24 @@ const Header = ({children}: { children: React.ReactNode }) => (
 // Home page component
 export default function Home() {
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-5 md:p-24">
+        // <main className="flex h-auto flex-col items-center justify-between p-5 md:p-24">
+        <div className="p-5 md:p-24 flex h-full flex-col items-center justify-between">
 
             {/* Background image */}
             <div className="absolute w-full h-full top-0 left-0 -z-40">
                 {/* Absolute positioned image */}
                 <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
-                    <Image src={'/404.jpeg'} layout='fill' objectFit='cover' alt={'404'} placeholder='blur'
+                    <Image src={'/404.jpeg'}
+                           layout='fill'
+                           objectFit='cover'
+                           alt={'404'}
+                           placeholder='blur'
                            blurDataURL={'/404.jpeg'}/>
                 </div>
 
                 {/* Gradient overlay */}
                 <div
-                    className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t dark:from-black from-white to-transparent"></div>
+                    className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t bg-primary-fade to-transparent"></div>
             </div>
 
             {/* Header */}
@@ -103,7 +108,6 @@ export default function Home() {
                     and activities of this project are not officially endorsed by NSRI.
                 </p>
             </footer>
-
-        </main>
+        </div>
     )
 }
