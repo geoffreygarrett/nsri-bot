@@ -201,15 +201,11 @@ const initialState: MapState = {
 };
 
 
-const fullInitialState = combineState(createInitialState('rescue_buoys'), createInitialState('nsri_stations'), initialState);
-console.log("fullInitialState", fullInitialState);
-console.log("createInitialState('rescue_buoys')", createInitialState('rescue_buoys'));
-
 export const AppContext = createContext<{
     state: (TableState<'rescue_buoys'> & TableState<'nsri_stations'> & MapState);
     dispatch: React.Dispatch<TableActions<'rescue_buoys'> | TableActions<'nsri_stations'> | MapAction>
 }>({
-    state: fullInitialState,
+    state: combineState(createInitialState('rescue_buoys'), createInitialState('nsri_stations'), initialState),
     dispatch: () => null
 });
 
@@ -223,6 +219,7 @@ import tableReducer, {
     TableState, updateChangeStatusAction, updateItemAction,
     useRealtimeChanges,
 } from "@/store/table-reducer";
+
 import {useGeolocation, useLocalStorage} from "@uidotdev/usehooks";
 import {useSupabaseClient} from "@supabase/auth-helpers-react";
 import {Database, Tables} from "@/types/supabase";
@@ -232,7 +229,7 @@ import {Algorithm, AlgorithmOptions} from "@googlemaps/markerclusterer";
 // Define a function to set up real-time updates
 export const AppProvider = ({children}: { children: React.ReactNode }) => {
     "use client";
-    const [localTables, setLocalTables] = useLocalStorage(TABLE_STATE_STORAGE_KEY, fullInitialState.tables);
+    const [localTables, setLocalTables] = useLocalStorage(TABLE_STATE_STORAGE_KEY, null);
     // const localStorageChanges = localStorage.getItem(TABLE_STATE_STORAGE_KEY);
     const supabase = useSupabaseClient<Database>();
 

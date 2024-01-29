@@ -1,11 +1,7 @@
 "use client";
 
-import {EquipmentStatus, IExport, IMarker, DataType} from "@/components/types";
-import supabase, {Enums} from "@/supabase";
+import supabase from "@/supabase";
 import Image from 'next/image';
-import {exportCsv, exportKml} from "@/lib/export";
-import Markers from "@/components/map-features/map-markers";
-import useGeolocationPosition from "@/hooks/use_user_location";
 import MarkerClusterer from "@/app/map/_components/integrations/google-maps/marker-clusterer";
 import {v4 as uuidv4} from 'uuid';
 import {Polygon as PolygonType} from "geojson";
@@ -93,15 +89,10 @@ export function isStation(point: any): point is Tables<'nsri_stations'> {
 
 
 
-// export const useLocation = (enableHighAccuracy = false, watchPosition = false, timeout = 10000, enabled = false) => {
 
-
-
-import {useDebounce, useGeolocation, useMediaQuery, useNetworkState} from "@uidotdev/usehooks";
+import {useMediaQuery, useNetworkState} from "@uidotdev/usehooks";
 import {MapMenubar} from "./_components/map/map-controls/menubar";
-import {useLocation} from "@/hooks/use-location";
 import {BuoyInfoWindowContent, StationInfoWindowContent} from "./_components/map/buoy-info-window-content";
-import {AlgorithmOptions, Algorithm} from "@googlemaps/markerclusterer";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Polygon} from "@/app/map/_components/integrations/google-maps/draw/polygon";
 

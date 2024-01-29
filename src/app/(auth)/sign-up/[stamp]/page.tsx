@@ -8,25 +8,25 @@ import {invitationsQuery, makeInvitationsQuery} from "@/types/queries";
 import ErrorPage from "@/components/error-page";
 import React from "react";
 import supabase from "@/supabase";
-import {cookies} from "next/headers";
+// import {cookies} from "next/headers";
 
-// export const revalidate = 60
+export const revalidate = 60
 
-// export async function generateStaticParams() {
-//     const response = await makeInvitationsQuery(supabase)
-//     const invitations = response.data
-//     if (response.error) {
-//         throw response.error
-//     }
-//     if (!invitations) {
-//         throw new Error("No invitations found")
-//     }
-//     return invitations?.map((invitation: any) => {
-//         return {
-//             code: invitation.stamp_id
-//         }
-//     })
-// }
+export async function generateStaticParams() {
+    const response = await makeInvitationsQuery(supabase)
+    const invitations = response.data
+    if (response.error) {
+        throw response.error
+    }
+    if (!invitations) {
+        throw new Error("No invitations found")
+    }
+    return invitations?.map((invitation: any) => {
+        return {
+            code: invitation.stamp_id
+        }
+    })
+}
 
 export const dynamic = 'force-dynamic';
 

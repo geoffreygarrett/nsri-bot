@@ -11,28 +11,27 @@ import {logEndpointSchema} from "./data/schema"
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {Database} from "@/types/supabase";
 import {cookies} from "next/headers";
-import {ReadonlyRequestCookies} from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 // export const metadata: Metadata = {
 //     title: "Tasks",
 //     description: "A task and issue tracker build using Tanstack Table.",
 // }
 
-async function getCookieData() {
-    const cookieData = cookies().getAll()
-    return new Promise((resolve) =>
-        setTimeout(() => {
-            resolve(cookieData)
-        }, 1000)
-    )
-}
+// async function getCookieData() {
+//     const cookieData = cookies().getAll()
+//     return new Promise((resolve) =>
+//         setTimeout(() => {
+//             resolve(cookieData)
+//         }, 1000)
+//     )
+// }
 
 // Simulate a database read for tasks.
 async function getLog() {
-    const cookieData = await getCookieData();
+    // const cookieData = await getCookieData();
 
     const supabase = createServerComponentClient<Database>(
-        {cookies: () => cookieData as ReadonlyRequestCookies}
+        {cookies: () => cookies()}
     )
     const {data} = await supabase.from('log_endpoint').select('*').order('created_at', {ascending: false})
     if (!data) {
