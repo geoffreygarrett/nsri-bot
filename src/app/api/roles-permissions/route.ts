@@ -23,7 +23,7 @@ import {createErrorResponse} from "@/app/api/helper";
  * @returns {Promise<NextResponse>} - A promise that resolves to a response object containing roles and permissions or an error message.
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
-    const supabase: SupabaseClient<Database> = createRouteHandlerClient<Database>({cookies: cookies});
+    const supabase = createRouteHandlerClient<Database>({cookies: () => cookies()});
     const userId = request.nextUrl.pathname.split('/').pop();
 
     try {

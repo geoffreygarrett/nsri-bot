@@ -7,8 +7,7 @@ import {cookies} from "next/headers";
 export async function POST(request: NextRequest) {
 
     // Create Supabase client
-    const supabase =
-        createRouteHandlerClient<Database>({cookies});
+    const supabase = createRouteHandlerClient<Database>({cookies: () => cookies()});
 
     // Get request body
     const body = await request.body;
@@ -20,8 +19,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
 
     // Create Supabase client
-    const supabase =
-        createRouteHandlerClient<Database>({cookies});
+    const supabase = createRouteHandlerClient<Database>({cookies: () => cookies()});
 
     // Get request body
     const {data, error} = await supabase

@@ -18,7 +18,7 @@ const THIS_ENDPOINT = `/api/invitations`;
  * Detailed documentation...
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
-    const supabase: SupabaseClient<Database> = createRouteHandlerClient<Database>({cookies});
+    const supabase = createRouteHandlerClient<Database>({cookies: () => cookies()});
     const userId = request.nextUrl.pathname.split('/').pop();
 
     try {

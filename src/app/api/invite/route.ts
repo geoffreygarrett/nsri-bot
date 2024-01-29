@@ -18,7 +18,7 @@ const WA_SEND_ENDPOINT = `/api/wa/send`;
 const THIS_ENDPOINT = `/api/invite`;
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-    const supabase: SupabaseClient<Database> = createRouteHandlerClient<Database>({cookies});
+    const supabase = createRouteHandlerClient<Database>({cookies: () => cookies()});
     const apiLogger = new ApiLogger(supabase, LoggingMode.All, 1, THIS_ENDPOINT);
     const invitation: InvitationFormValues = await request.json();
 

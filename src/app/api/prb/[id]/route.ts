@@ -6,8 +6,8 @@ import {NextRequest} from "next/server";
 
 export async function GET(request: NextRequest, {params}: { params: { id: string } }) {
     // Create Supabase client
-    const supabase =
-        createRouteHandlerClient<Database>({cookies});
+    const supabase = createRouteHandlerClient<Database>({cookies: () => cookies()});
+
 
     // Get request body
     const {data, error} = await supabase

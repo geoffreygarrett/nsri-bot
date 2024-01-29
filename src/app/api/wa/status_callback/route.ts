@@ -22,7 +22,7 @@ const MESSAGES_SENT = process.env.MESSAGES_SENT_TABLE_NAME || `messages_sent`;
 export async function POST(request: NextRequest) {
 
     // Create Supabase client
-    const supabase = createRouteHandlerClient<Database>({cookies});
+    const supabase = createRouteHandlerClient<Database>({cookies: () => cookies()});
     const apiLogger = new ApiLogger(supabase, LoggingMode.All, 1, '/api/wa/status_callback'); // Adjust the endpoint as needed
 
     try {

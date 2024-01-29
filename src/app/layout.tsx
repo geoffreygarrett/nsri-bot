@@ -12,6 +12,7 @@ import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 const inter = Inter({subsets: ['latin']})
 
 // Metadata configuration
+export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
     title: 'NSRI App',
     description: 'Innovative technology for sea rescue operations.',
@@ -55,7 +56,6 @@ export const metadata: Metadata = {
 };
 
 import {Database} from "@/types/supabase";
-import {cookies} from "next/headers";
 import AppProviders from "@/app/providers";
 import {cn} from "@/lib/utils";
 import {glassEffect} from "@/constants";

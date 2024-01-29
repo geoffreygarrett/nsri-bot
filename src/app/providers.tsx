@@ -7,14 +7,14 @@ import {OTPDialogProvider} from "@/providers/otp-provider";
 import SupabaseProvider from "@/app/supabase-provider";
 
 import {PermissionProvider, usePermission} from "react-permission-role";
-import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
+import {createRouteHandlerClient, createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import {Database} from "@/types/supabase";
 import {cookies} from "next/headers";
 import {useUser} from "@supabase/auth-helpers-react";
 
 
 const AppProviders: React.FC<{ children: React.ReactNode }> = async ({children}) => {
-    const supabase = createServerComponentClient<Database>({cookies});
+    const supabase = createRouteHandlerClient<Database>({cookies: () => cookies()});
     const session = await supabase.auth.getSession();
 
     return (

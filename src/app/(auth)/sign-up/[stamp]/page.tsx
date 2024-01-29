@@ -8,6 +8,7 @@ import {invitationsQuery, makeInvitationsQuery} from "@/types/queries";
 import ErrorPage from "@/components/error-page";
 import React from "react";
 import supabase from "@/supabase";
+import {cookies} from "next/headers";
 
 // export const revalidate = 60
 
@@ -28,8 +29,10 @@ import supabase from "@/supabase";
 // }
 
 export const dynamic = 'force-dynamic';
+
+
 export default async function Page({params}: { params: { stamp: string } }) {
-    // const supabase = createServerComponentClient({cookies})
+    const supabase = createServerComponentClient({cookies: () => cookies()});
     const response = await makeInvitationsQuery(supabase)
         .eq('stamp_id', params.stamp)
         .single();
