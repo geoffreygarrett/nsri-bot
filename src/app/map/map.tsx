@@ -88,8 +88,6 @@ export function isStation(point: any): point is Tables<'nsri_stations'> {
 }
 
 
-
-
 import {useMediaQuery, useNetworkState} from "@uidotdev/usehooks";
 import {MapMenubar} from "./_components/map/map-controls/menubar";
 import {BuoyInfoWindowContent, StationInfoWindowContent} from "./_components/map/buoy-info-window-content";
@@ -163,6 +161,7 @@ import {
     updateChangeStatusAction,
     updateItemAction
 } from "@/store/table-reducer";
+import {useSupabaseClient} from "@supabase/auth-helpers-react";
 
 
 // Adjust the signature of useAuthorizedCallback to accept a function for roles and permissions
@@ -214,6 +213,7 @@ export const getPermissions = (action: 'edit' | 'create' | 'delete', item: Table
 const SimpleMap = ({serverData}: {
     serverData: { rescue_buoys: Tables<'rescue_buoys'>[], nsri_stations: Tables<'nsri_stations'>[] }
 }) => {
+    const supabase = useSupabaseClient<Database>();
     // console.log('SimpleMap', serverData);
     const {
         state, dispatch
@@ -275,6 +275,7 @@ const SimpleMap = ({serverData}: {
             } catch (error: any) {
                 console.error(error);
                 toast.error(`Sync error: ${error.message}`);
+                console.log(error);
                 // Handle specific error scenarios here
             }
         }
@@ -868,7 +869,10 @@ const SimpleMap = ({serverData}: {
                         }
                         // synchronized={!state.tables.rescue_buoys.changes.some(change => change.id === item.id && !change.synchronized)}
                         data={{
-                            synchronized: !state.tables.rescue_buoys.changes.some((change: { id: any; synchronized: boolean }) => change.id === item.id && !change.synchronized),
+                            synchronized: !state.tables.rescue_buoys.changes.some((change: {
+                                id: any;
+                                synchronized: boolean
+                            }) => change.id === item.id && !change.synchronized),
                             selected: (editState.focused?.id === item.id),
                             onCloseClick: closeInfoWindow,
                             onEditClick: () => handleEditClick(item),
@@ -896,7 +900,10 @@ const SimpleMap = ({serverData}: {
                             }
                             data={
                                 {
-                                    synchronized: !state.tables.nsri_stations.changes.some((change: { id: any; synchronized: boolean }) => change.id === item.id && !change.synchronized),
+                                    synchronized: !state.tables.nsri_stations.changes.some((change: {
+                                        id: any;
+                                        synchronized: boolean
+                                    }) => change.id === item.id && !change.synchronized),
                                     onCloseClick: closeInfoWindow,
                                     selected: editState.focused?.id === item.id,
                                     onEditClick: () => handleEditClick(item),
