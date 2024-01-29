@@ -27,7 +27,7 @@ import supabase from "@/supabase";
 //     })
 // }
 
-
+export const dynamic = 'force-dynamic';
 export default async function Page({params}: { params: { stamp: string } }) {
     // const supabase = createServerComponentClient({cookies})
     const response = await makeInvitationsQuery(supabase)
