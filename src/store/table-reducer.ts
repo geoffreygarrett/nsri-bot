@@ -8,12 +8,14 @@ import {SupabaseClient} from "@supabase/auth-helpers-nextjs";
 import {Dispatch, useCallback, useEffect} from "react";
 import {REALTIME_POSTGRES_CHANGES_LISTEN_EVENT} from "@supabase/realtime-js/dist/module/RealtimeChannel";
 import {toast} from "sonner";
+import {diff} from "json-diff-ts";
 
 export enum POSTGRES_CHANGES_EVENT {
     INSERT = 'INSERT',
     UPDATE = 'UPDATE',
     DELETE = 'DELETE'
 }
+
 
 export const TABLE_STATE_STORAGE_KEY = 'table-state'
 
@@ -46,16 +48,35 @@ export function updateItem<T extends keyof Database['public']['Tables']>(array: 
     );
 }
 
-export function updateItemWithChange<T extends keyof Database['public']['Tables']>(array: Tables<T>[], item: Partial<Tables<T>>, column: keyof Tables<T>, value: Tables<T>[keyof Tables<T>])
-    : { newArray: Tables<T>[], oldItem: Tables<T> | {}, newItem: Tables<T> | {} } {
+// export function updateItemWithChange<T extends keyof Database['public']['Tables']>(array: Tables<T>[], item: Partial<Tables<T>>, column: keyof Tables<T>, value: Tables<T>[keyof Tables<T>])
+//     : { newArray: Tables<T>[], oldItem: Tables<T> | {}, newItem: Tables<T> | {} } {
+//     const index = array.findIndex(arrayItem => arrayItem[column] === value);
+//     if (index === -1) return {newArray: array, oldItem: {}, newItem: {}}
+//     const newArray = [...array];
+//     const oldItem = newArray[index];
+//     const newItem = {...oldItem, ...item};
+//     newArray[index] = newItem;
+//     return {newArray, oldItem, newItem};
+// }
+export function updateItemWithChange<T extends keyof Database['public']['Tables']>(
+    array: Tables<T>[],
+    item: Partial<Tables<T>> | ((prevItem: Tables<T>) => Partial<Tables<T>>),
+    column: keyof Tables<T>,
+    value: Tables<T>[keyof Tables<T>]
+): { newArray: Tables<T>[]; oldItem: Tables<T> | {}; newItem: Tables<T> | {} } {
     const index = array.findIndex(arrayItem => arrayItem[column] === value);
-    if (index === -1) return {newArray: array, oldItem: {}, newItem: {}}
+    if (index === -1) return { newArray: array, oldItem: {}, newItem: {} };
     const newArray = [...array];
     const oldItem = newArray[index];
-    const newItem = {...oldItem, ...item};
+
+    // Check if item is a function and call it with oldItem
+    const updatedItem = typeof item === 'function' ? item(oldItem) : item;
+
+    const newItem = { ...oldItem, ...updatedItem };
     newArray[index] = newItem;
-    return {newArray, oldItem, newItem};
+    return { newArray, oldItem, newItem };
 }
+
 
 export function updateItemMatch<T extends keyof Database['public']['Tables']>(array: Tables<T>[], oldItem: Partial<Tables<T>>, newItem: Tables<T> | {}): Tables<T>[] {
     return array.map(arrayItem =>
@@ -119,10 +140,14 @@ interface DeletePayload<T extends keyof Database['public']['Tables']> {
     value: Tables<T>[keyof Tables<T>]
 }
 
+
+// data: Tables<T> | ((prevItem: Tables<T>) => Tables<T>); // Updated to accept a callback
+
+
 type UpdatePayload<T extends keyof Database['public']['Tables']> = {
     column: keyof Tables<T>,
     value: Tables<T>[keyof Tables<T>],
-    data: Partial<Tables<T>>
+    data: Partial<Tables<T>> | ((prevItem: Tables<T>) => Tables<T>); // Updated to accept a callback
 }
 
 type InsertPayload<T extends keyof Database['public']['Tables']> = Tables<T>;
@@ -444,12 +469,15 @@ interface HistoryState<T extends keyof Database['public']['Tables']> {
 }
 
 
+
+
 export interface TableState<T extends keyof Database['public']['Tables']> {
     tables: {
         [K in T]: {
             values: Tables<K>[];
             changes: Change<K>[];
             history: HistoryState<K>;
+            diffs: any[];
             sync: {
                 enabled: boolean;
                 status: 'idle' | 'loading' | 'error';
@@ -479,6 +507,7 @@ export const createInitialState = <T extends keyof Database['public']['Tables']>
     const singleTableState: TableState<T>['tables'][T] = {
         values: [] as Tables<T>[],
         changes: [] as Change<T>[],
+        diffs: [],
         history: {
             past: [] as Change<T>[],
             present: null,
@@ -536,6 +565,7 @@ const tableReducer = <T extends keyof Database['public']['Tables']>(
                     ...state.tables,
                     [table]: {
                         ...state.tables[table],
+                        diffs: [...state.tables[table].diffs, diff(oldItem, newItem)],
                         values: insertItem<typeof table>(state.tables[table].values, payload),
                         changes: [
                             ...state.tables[table].changes,
@@ -569,6 +599,7 @@ const tableReducer = <T extends keyof Database['public']['Tables']>(
                     [table]: {
                         ...state.tables[table],
                         values: newArray,
+                        diffs: [...state.tables[table].diffs, diff(oldItem, newItem)],
                         changes: [
                             ...state.tables[table].changes,
                             {
@@ -601,6 +632,7 @@ const tableReducer = <T extends keyof Database['public']['Tables']>(
                     ...state.tables,
                     [table]: {
                         ...state.tables[table],
+                        diffs: [...state.tables[table].diffs, diff(oldItem, {})],
                         values: deleteItem<typeof table>(state.tables[table].values, value, column),
                         changes: [
                             ...state.tables[table].changes,
@@ -786,80 +818,6 @@ const tableReducer = <T extends keyof Database['public']['Tables']>(
 }
 
 
-// export type RealtimePostgresInsertPayload<T extends { [key: string]: any }> =
-//     RealtimePostgresChangesPayloadBase & {
-//     eventType: `${REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.INSERT}`
-//     new: T
-//     old: {}
-// }
-//
-// export type RealtimePostgresUpdatePayload<T extends { [key: string]: any }> =
-//     RealtimePostgresChangesPayloadBase & {
-//     eventType: `${REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.UPDATE}`
-//     new: T
-//     old: Partial<T>
-// }
-//
-// export type RealtimePostgresDeletePayload<T extends { [key: string]: any }> =
-//     RealtimePostgresChangesPayloadBase & {
-//     eventType: `${REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.DELETE}`
-//     new: {}
-//     old: Partial<T>
-// }
-
-// export const useSyncChanges = <K extends keyof Database['public']['Tables']>(
-//     {supabase, table, dispatch, state}: {
-//         supabase: SupabaseClient<Database>,
-//         table: K,
-//         dispatch: Dispatch<any>,
-//         state: TableState<K>
-//     }
-// ) => {
-//     useEffect(() => {
-//
-//         for (const table of ['rescue_buoys', 'nsri_stations'] as const) {
-//             for (const change of state.tables[table].changes) {
-//                 if (change.source === 'client' && !change.synchronized) {
-//                     if (change.type === 'INSERT') {
-//                         supabase.from(table).insert(change.payload.data).then(({data, error}) => {
-//                             if (error) {
-//                                 console.error(error);
-//                                 toast.error(error.message);
-//                             } else {
-//                                 dispatch(updateChangeStatusAction(table, change.id, true));
-//                                 toast.success('Operation successful');
-//                             }
-//                         });
-//                     } else if (change.type === 'UPDATE') {
-//                         supabase.from(table).update(change.payload.data).match({[change.payload.column]: change.payload.value}).then(({
-//                                                                                                                                           data,
-//                                                                                                                                           error
-//                                                                                                                                       }) => {
-//                             if (error) {
-//                                 console.error(error);
-//                                 toast.error(error.message);
-//                             } else {
-//                                 dispatch(updateChangeStatusAction(table, change.id, true));
-//                                 toast.success('Operation successful');
-//                             }
-//                         });
-//                     } else if (change.type === 'DELETE') {
-//                         supabase.from(table).delete().match({id: change.data.id}).then(({data, error}) => {
-//                             if (error) {
-//                                 console.error(error);
-//                                 toast.error(error.message);
-//                             } else {
-//                                 dispatch(updateChangeStatusAction(table, change.id, true));
-//                                 toast.success('Operation successful');
-//                             }
-//                         });
-//                     }
-//                 }
-//             }
-//         }
-//     }, [state.tables, dispatch]);
-// }
-
 export const useRealtimeChanges = <K extends keyof Database['public']['Tables']>(
     {supabase, table, dispatch, channelName, enabled = true, timeout = 1000}: {
         supabase: SupabaseClient<Database>,
@@ -907,11 +865,54 @@ export const useRealtimeChanges = <K extends keyof Database['public']['Tables']>
     }, [table, dispatch, channelName, timeout, enabled, supabase]);
 };
 
+namespace store {
+
+    // const insertItem = <T extends keyof Database['public']['Tables']>(table: T, item: Tables<T>, source: `${SOURCE}`): InsertItemAction<T> => {
+    //     const {state, dispatch} = useTableState(table);
+    //     const oldItem = {};
+    //     const newItem = item;
+    //     const [column, value] = getFirstKeyAndValue(item);
+    //     dispatch({
+    //         type: ACTION_TYPES.INSERT_ITEM,
+    //         table,
+    //         payload: item,
+    //         source
+    //     });
+    //
+    // }
+
+}
+
 
 export const combineDispatch = (...dispatches: Dispatch<any>[]) => (action: any) =>
     dispatches.forEach((dispatch) => dispatch(action));
 
-export const combineState = (...states: any[]) => states.reduce((acc, state) => ({...acc, ...state}), {});
+// export const combineState = (...states: any[]) => states.reduce((acc, state) => ({...acc, ...state}), {});
+export const combineState = (...states: any[]) => {
+    return states.reduce((acc, state) => {
+        Object.keys(state).forEach(key => {
+            if (acc.hasOwnProperty(key)) {
+                if (Array.isArray(acc[key]) && Array.isArray(state[key])) {
+                    // Concatenate arrays
+                    acc[key] = acc[key].concat(state[key]);
+                } else if (typeof acc[key] === 'number' && typeof state[key] === 'number') {
+                    // Sum numbers
+                    acc[key] += state[key];
+                } else if (typeof acc[key] === 'object' && typeof state[key] === 'object') {
+                    // Merge objects
+                    acc[key] = {...acc[key], ...state[key]};
+                } else {
+                    // Replace with the new value or implement your own logic
+                    acc[key] = state[key];
+                }
+            } else {
+                acc[key] = state[key];
+            }
+        });
+        return acc;
+    }, {});
+}
+
 
 /// How to combine types:
 // // Example:

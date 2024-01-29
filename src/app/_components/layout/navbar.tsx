@@ -1,11 +1,11 @@
 "use client";
 
-import {Fragment, useState} from 'react';
+import {Fragment, useMemo, useState} from 'react';
 import {Disclosure} from '@headlessui/react';
 import {Bars3Icon, XMarkIcon} from '@heroicons/react/24/outline';
 import Image from "next/image";
 import {useTheme} from 'next-themes';
-import {ThemeSwitcher} from "@/components/layout/theme-switcher";
+import {ThemeSwitcher} from "@/app/_components/layout/theme-switcher";
 import {cn} from "@/lib/utils";
 import Link from 'next/link';
 
@@ -24,8 +24,8 @@ const navigation: NavItem[] = [
 
 
 import {UserIcon} from "@heroicons/react/24/solid";
-import Avatar from "@/components/avatar/avatar";
-import {AvatarMenu} from "@/components/avatar/avatar-menu";
+import Avatar from "@/app/_components/avatar/avatar";
+import {AvatarMenu} from "@/app/_components/avatar/avatar-menu";
 import {router} from "next/client";
 import {usePathname, useRouter} from "next/navigation";
 // import {useSupabase} from "@/app/supabase-provider";
@@ -46,7 +46,7 @@ export default function Navbar({className}: { className?: string }) {
     const router = useRouter();
     const pathname = usePathname();
     const supabase = useSupabaseClient();
-    const avatarActions = user ? [
+    const avatarActions = useMemo(() => user ? [
         {
             label: "Profile",
             action: () => {
@@ -66,7 +66,7 @@ export default function Navbar({className}: { className?: string }) {
                 router.refresh();
                 if (!error) {
                     toast.success("Logged out successfully");
-                    router.push(SIGN_IN_PATH);
+                    // router.push(SIGN_IN_PATH);
 
                 } else {
                     toast.error("Logout failed");
@@ -91,7 +91,7 @@ export default function Navbar({className}: { className?: string }) {
         //         router.push("/sign-up");
         //     },
         // },
-    ];
+    ], [user, pathname, router]);
 
 
     return (
@@ -122,7 +122,7 @@ export default function Navbar({className}: { className?: string }) {
                             {/* Logo or title */}
                             <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
                                 <div className="flex-shrink-0 flex items-center">
-                                    <Link href="/public">
+                                    <Link href="/">
                                         <Image src="/nsri-logo.svg" alt="NSRI Logo" width={40} height={40}
                                                className="pr-2 z-50"/>
                                     </Link>

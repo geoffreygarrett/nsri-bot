@@ -15,7 +15,7 @@ import Image from "next/image";
 import {CameraIcon} from "@heroicons/react/24/outline";
 import {Separator} from "@/components/ui/separator";
 import {Textarea} from "@/components/ui/textarea";
-import {AppContext} from "@/app/map/map";
+import {AppContext} from "@/app/app";
 import {Database, Tables} from "@/supabase";
 import {cn} from "@/lib/utils";
 import {SOURCE, updateItemAction} from "@/store/table-reducer";
@@ -27,12 +27,15 @@ import {useSupabaseClient} from "@supabase/auth-helpers-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
 import {Label} from "@/components/ui/label";
+import {useNetworkState} from "@uidotdev/usehooks";
 
 export function RescueBuoyForm({buoy, onClose, className}: { buoy: any, onClose: () => void, className?: string }) {
     const supabase = useSupabaseClient<Database>();
     const {state, dispatch} = useContext(AppContext);
     const [loading, setLoading] = React.useState(false);
     const [image, setImage] = React.useState<string | null>(buoy.image_url);
+
+    const network = useNetworkState();
 
     const form = useForm({
         defaultValues: {

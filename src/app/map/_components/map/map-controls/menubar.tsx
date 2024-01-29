@@ -23,7 +23,8 @@ import * as turf from '@turf/turf'
 
 import {mkConfig, generateCsv, download} from "export-to-csv";
 import React, {useCallback, useContext} from "react";
-import {AppContext, isRescueBuoy} from "@/app/map/map";
+import { isRescueBuoy} from "@/app/map/map";
+import {AppContext} from "@/app/app";
 import {Database, Tables} from "@/types/supabase";
 import {KmlBuilder, triggerDownload} from "@/lib/export";
 import {TABLE_STATE_STORAGE_KEY} from "@/store/table-reducer";

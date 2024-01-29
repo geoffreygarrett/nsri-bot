@@ -15,7 +15,7 @@ import Image from "next/image";
 import {CameraIcon} from "@heroicons/react/24/outline";
 import {Separator} from "@/components/ui/separator";
 import {Textarea} from "@/components/ui/textarea";
-import {AppContext} from "@/app/map/map";
+import {AppContext} from "@/app/app";
 import {Database, Tables} from "@/supabase";
 import {cn} from "@/lib/utils";
 import {SOURCE, updateItemAction} from "@/store/table-reducer";

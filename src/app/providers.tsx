@@ -2,7 +2,7 @@ import React from "react";
 import ConfirmationDialog, {ConfirmationDialogProvider} from "@/providers/confirmation-provider";
 import OTPDialog from "@/providers/otp-dialogue";
 import {Toaster} from "@/components/ui/sonner";
-import {ThemeProvider} from "@/components/layout/theme-provider";
+import {ThemeProvider} from "@/app/_components/layout/theme-provider";
 import {OTPDialogProvider} from "@/providers/otp-provider";
 import SupabaseProvider from "@/app/supabase-provider";
 

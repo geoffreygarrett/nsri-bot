@@ -2,7 +2,7 @@ import React, {useCallback, useContext} from "react";
 import {Polygon, PolygonPropsAll, usePolygonRef} from "@/app/map/_components/integrations/google-maps/draw/polygon";
 import {Tables} from "@/types/supabase";
 import {updateItemAction} from "@/store/table-reducer";
-import {AppContext} from "@/app/map/map";
+import {AppContext} from "@/app/app";
 
 interface PolygonWithHooksProps extends PolygonPropsAll {
     item: Tables<'nsri_stations'>;

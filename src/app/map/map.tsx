@@ -92,315 +92,11 @@ export function isStation(point: any): point is Tables<'nsri_stations'> {
 }
 
 
-// Define your action types
-const actionTypes = {
-    SET_MARKERS: 'SET_MARKERS',
-    SET_QUALITY: 'SET_QUALITY',
-    TOGGLE_SHOW_BUOYS: 'TOGGLE_SHOW_BUOYS',
-    TOGGLE_SHOW_STATIONS: 'TOGGLE_SHOW_STATIONS',
-    TOGGLE_SHOW_USER_LOCATION: 'TOGGLE_SHOW_USER_LOCATION',
-    TOGGLE_ENABLE_CLUSTERING: 'TOGGLE_ENABLE_CLUSTERING',
-
-
-    TOGGLE_SETTING: 'TOGGLE_SETTING',
-    SET_LOADING: 'SET_LOADING',
-    SET_REALTIME_STATE: 'SET_REALTIME_STATE',
-    SET_REALTIME_LOADING: 'SET_REALTIME_LOADING',
-    SET_LOCATION: 'SET_LOCATION',
-    SET_INFO_WINDOW: 'SET_INFO_WINDOW',
-
-    NEW_POSITION_LINE: 'NEW_POSITION_LINE',
-
-    // ... other actions like handling geolocation changes
-};
-
-interface Toggle {
-    enabled: boolean;
-    loading: boolean;
-}
-
-
-// MapMarker[],
-type State = {
-    info_window: {
-        id: string | number | null,
-        marker: google.maps.Marker | google.maps.marker.AdvancedMarkerElement | null,
-        open: boolean
-        item: Tables<'rescue_buoys'> | Tables<'nsri_stations'> | null
-        draggable: boolean
-    }
-    location: {
-        value: GeolocationPosition | null,
-        loading: boolean,
-        error: GeolocationPositionError | null
-    },
-    settings: {
-        location: { enableHighAccuracy: boolean, watchPosition: boolean, timeout: number },
-        map: { center: { lat: number, lng: number }, zoom: number },
-        clusterer: { algorithmOptions?: AlgorithmOptions, algorithm?: Algorithm },
-        toggles: {
-            show_buoys: Toggle,
-            show_stations: Toggle,
-            enable_location: Toggle,
-            enable_clustering: Toggle,
-            enable_performance_mode: Toggle,
-        }
-    },
-}
-
-interface ToggleSettingAction {
-    type: typeof actionTypes.TOGGLE_SETTING;
-    payload: keyof State['settings']['toggles'];
-}
-
-interface SetLoadingAction {
-    type: typeof actionTypes.SET_LOADING;
-    payload: {
-        key: keyof State['settings']['toggles'];
-        loading: boolean;
-    };
-}
-
-interface SetLocationAction {
-    type: typeof actionTypes.SET_LOCATION;
-    payload: State['location'];
-}
-
-interface SetInfoWindowAction {
-    type: typeof actionTypes.SET_INFO_WINDOW;
-    payload: Partial<State['info_window']>;
-}
-
-interface SetQualityAction {
-    type: typeof actionTypes.SET_QUALITY;
-    payload: Record<string, any>;
-}
-
-type Action =
-    | ToggleSettingAction
-    | SetLoadingAction
-    | SetLocationAction;
-
-const RESCUE_BUOYS = 'rescue_buoys';
-const NSRI_STATIONS = 'nsri_stations';
-
-
-// Create the reducer function
-const reducer = (state: State, action: Action): State => {
-    switch (action.type) {
-
-
-        // case actionTypes.SET_QUALITY:
-        //     const setQualityAction = action as SetQualityAction;
-        //     return {...state, quality: setQualityAction.payload};
-
-        case actionTypes.SET_INFO_WINDOW:
-            const setInfoWindowAction = action as SetInfoWindowAction;
-            // console.log(setInfoWindowAction.payload)
-            return {
-                ...state,
-                info_window: {
-                    ...state.info_window,
-                    ...setInfoWindowAction.payload
-                }
-            };
-
-        case actionTypes.TOGGLE_SETTING:
-            // Ensure that action is of ToggleSettingAction type
-            const toggleAction = action as ToggleSettingAction;
-
-            // Toggle setting and set loading to true initially
-            return {
-                ...state,
-                settings: {
-                    ...state.settings,
-                    toggles: {
-                        ...state.settings.toggles,
-                        [toggleAction.payload]: {
-                            ...state.settings.toggles[toggleAction.payload],
-                            enabled: !state.settings.toggles[toggleAction.payload].enabled,
-                            loading: true
-                        }
-                    }
-                }
-            };
-
-        case actionTypes.SET_LOADING:
-            // Ensure that action is of SetLoadingAction type
-            const setLoadingAction = action as SetLoadingAction;
-
-            // Set loading state for a specific setting
-            return {
-                ...state,
-                settings: {
-                    ...state.settings,
-                    toggles: {
-                        ...state.settings.toggles,
-                        [setLoadingAction.payload.key]: {
-                            ...state.settings.toggles[setLoadingAction.payload.key],
-                            loading: setLoadingAction.payload.loading
-                        }
-                    }
-                }
-            };
-
-
-        case actionTypes.SET_LOCATION:
-            // Ensure that action is of SetLocationAction type
-            const setLocationAction = action as SetLocationAction;
-
-            // Set location state
-            return {...state, location: {...state.location, ...setLocationAction.payload}};
-
-        default:
-            return state;
-    }
-};
-
 
 // export const useLocation = (enableHighAccuracy = false, watchPosition = false, timeout = 10000, enabled = false) => {
-const initialState: State = {
-    info_window: {
-        id: null,
-        marker: null,
-        open: false,
-        item: null,
-        draggable: false
-    },
-    location: {
-        value: null,
-        loading: false,
-        error: null
-    },
-    settings: {
-        location: {enableHighAccuracy: false, watchPosition: false, timeout: 10000},
-        map: {center: {lat: -34.12517, lng: 19.0376486}, zoom: 5},
-        clusterer: {algorithmOptions: {maxZoom: 15}},
-        toggles: {
-            show_buoys: {enabled: true, loading: false},
-            show_stations: {enabled: false, loading: false},
-            enable_location: {enabled: false, loading: false},
-            enable_clustering: {enabled: false, loading: false},
-            enable_performance_mode: {enabled: false, loading: false}
-        }
-    }
-};
-
-export const AppContext = createContext<{
-    state: (TableState<'rescue_buoys'> & TableState<'nsri_stations'> & State);
-    dispatch: React.Dispatch<TableActions<'rescue_buoys'> | TableActions<'nsri_stations'> | Action>
-}>({
-    state: combineState(createInitialState('rescue_buoys'), createInitialState('nsri_stations'), initialState),
-    dispatch: () => null
-});
 
 
-import tableReducer, {
-    applyFilters, Change,
-    combineDispatch,
-    combineState, createFilter, createInitialState, deleteItemAction,
-    setItemsAction, SOURCE, TABLE_STATE_STORAGE_KEY,
-    TableAction, TableActions,
-    TableState, updateChangeStatusAction, updateItemAction,
-    useRealtimeChanges,
-} from "@/store/table-reducer";
 
-
-// Define a function to set up real-time updates
-export const AppProvider = ({children}: { children: React.ReactNode }) => {
-    "use client";
-    const [localTables, setLocalTables] = useLocalStorage(TABLE_STATE_STORAGE_KEY, null);
-    // const localStorageChanges = localStorage.getItem(TABLE_STATE_STORAGE_KEY);
-
-    // Safely parse the local storage data
-    const getInitialState = () => {
-        if (localTables && localTables !== "undefined") {
-            try {
-                return {tables: localTables}
-            } catch (error) {
-                console.error('Error parsing local storage data:', error);
-            }
-        }
-        // Default initial state if local storage is empty, undefined, or in case of error
-        return {
-            tables: {
-                rescue_buoys: {
-                    values: [], changes: [], realtime: {enabled: true}, filters: [
-                        createFilter('rescue_buoys')('status', 'neq', 'UNKNOWN')
-                    ]
-                },
-                nsri_stations: {
-                    values: [], changes: [], realtime: {enabled: true}
-                }
-            }
-        };
-    };
-
-    // Define your reducer function
-    // const supabase = useSupabaseClient<Database>();
-    const [mapState, mapDispatch] = useReducer(reducer, initialState);
-    const [tableState, tableDispatch] = useReducer(
-        tableReducer<'rescue_buoys' & 'nsri_stations'>, getInitialState()
-    );
-
-    const state = useMemo(() => combineState(mapState, tableState), [mapState, tableState]);
-    const dispatch = useCallback(combineDispatch(mapDispatch, tableDispatch), [mapDispatch, tableDispatch]);
-
-    // After reducer logic, save the changes to local storage
-    useEffect(() => {
-        // localStorage.setItem(TABLE_STATE_STORAGE_KEY, JSON.stringify(state.tables));
-        setLocalTables(state.tables);
-    }, [setLocalTables, state.tables]);
-
-
-    const geolocation = useGeolocation();
-    useEffect(() => {
-        if (geolocation.latitude && geolocation.longitude) {
-            dispatch({
-                type: actionTypes.SET_LOCATION, payload: {
-                    value: {
-                        coords: {
-                            latitude: geolocation.latitude,
-                            longitude: geolocation.longitude,
-                            accuracy: geolocation.accuracy,
-                            altitude: geolocation.altitude,
-                            altitudeAccuracy: geolocation.altitudeAccuracy,
-                            heading: geolocation.heading,
-                            speed: geolocation.speed
-                        },
-                        timestamp: geolocation.timestamp
-                    },
-                    loading: false,
-                    error: null
-                }
-            });
-        }
-    }, [geolocation, dispatch]);
-
-    useRealtimeChanges({
-        supabase,
-        table: 'rescue_buoys',
-        enabled: true,
-        dispatch,
-        channelName: `custom-${RESCUE_BUOYS}-channel`,
-        timeout: 10000,
-    });
-
-    useRealtimeChanges({
-        supabase,
-        table: 'nsri_stations',
-        enabled: true,
-        dispatch,
-        channelName: `custom-${NSRI_STATIONS}-channel`,
-        timeout: 10000,
-    });
-
-    return (
-        <AppContext.Provider value={{state, dispatch}}>
-            {children}
-        </AppContext.Provider>
-    );
-};
 import {useDebounce, useGeolocation, useMediaQuery, useNetworkState} from "@uidotdev/usehooks";
 import {MapMenubar} from "./_components/map/map-controls/menubar";
 import {useLocation} from "@/hooks/use-location";
@@ -468,24 +164,16 @@ import {Input} from "@/components/ui/input";
 // } from "@/app/_components/providers/fps-provider";
 import {useFps} from "@/hooks/use-fps"
 import {useLocalStorage} from "@uidotdev/usehooks";
+import {AppContext, MapState} from "@/app/app";
+import {
+    Change,
+    deleteItemAction,
+    setItemsAction, SOURCE,
+    updateChangeStatusAction,
+    updateItemAction
+} from "@/store/table-reducer";
 
-// const useAuthorizedCallback = (callback: (...args: any[]) => void, requiredRoles: string[], permissions: string[]) => {
-//     const {isAuthorized, isLoading} = usePermission();
-//
-//     const wrappedCallback = useCallback(async (...args: any[]) => {
-//         if (isLoading) return;  // Optionally handle the loading state
-//
-//         const hasPermission = await isAuthorized(requiredRoles, permissions);
-//         if (hasPermission) {
-//             callback(...args);
-//         } else {
-//             toast.error('You are not authorized to perform this action');
-//             // Handle unauthorized access if needed
-//         }
-//     }, [callback, requiredRoles, permissions, isLoading, isAuthorized]);
-//
-//     return wrappedCallback;
-// };
+
 // Adjust the signature of useAuthorizedCallback to accept a function for roles and permissions
 export const useAuthorizedCallback = (
     callback: (...args: any[]) => void,
@@ -682,10 +370,10 @@ const SimpleMap = ({serverData}: {
     }, [serverData.nsri_stations, dispatch, reconcileData]);
 
 
-    useEffect(() => {
-        console.log(state.tables.rescue_buoys.changes);
-        console.log(state.tables.nsri_stations.changes);
-    }, [state.tables.rescue_buoys.changes, state.tables.nsri_stations.changes]);
+    // useEffect(() => {
+    //     console.log(state.tables.rescue_buoys.changes);
+    //     console.log(state.tables.nsri_stations.changes);
+    // }, [state.tables.rescue_buoys.changes, state.tables.nsri_stations.changes]);
 
 
     type FirstKey<T> = Extract<keyof T, string>;
@@ -725,7 +413,7 @@ const SimpleMap = ({serverData}: {
 
 
     const areAnyUnsynchronizedChanges = useCallback((table: 'nsri_stations' | 'rescue_buoys') => {
-        return state.tables[table].changes.some(change => !change.synchronized);
+        return state.tables[table].changes.some((change: { synchronized: any; }) => !change.synchronized);
     }, [state.tables]);
 
     const [aggregatedChanges, setAggregatedChanges] =
@@ -799,7 +487,7 @@ const SimpleMap = ({serverData}: {
         if (!editState.focused) return;
         const item = editState.focused;
         const {id} = item;
-        state.tables.rescue_buoys.values.forEach((buoy) => {
+        state.tables.rescue_buoys.values.forEach((buoy: Tables<'rescue_buoys'>) => {
             if (buoy.id === id) {
                 setEditState(prevState => ({
                     ...prevState,
@@ -807,7 +495,7 @@ const SimpleMap = ({serverData}: {
                 }));
             }
         });
-        state.tables.nsri_stations.values.forEach((station) => {
+        state.tables.nsri_stations.values.forEach((station: Tables<'nsri_stations'>) => {
             if (station.id === id) {
                 setEditState(prevState => ({
                     ...prevState,
@@ -1111,8 +799,8 @@ const SimpleMap = ({serverData}: {
             }
             <MapControl position={ControlPosition.LEFT_BOTTOM}>
                 <MapSettingsControl onSettingChange={(id: string, enabled: boolean) => dispatch({
-                    type: actionTypes.TOGGLE_SETTING,
-                    payload: id as keyof State['settings']['toggles']
+                    type: "TOGGLE_SETTING",
+                    payload: id as keyof MapState['settings']['toggles']
                 })} className="ml-2 mb-2 border border-gray-400 dark:border-gray-600"/>
             </MapControl>
 
@@ -1189,7 +877,7 @@ const SimpleMap = ({serverData}: {
                         }
                         // synchronized={!state.tables.rescue_buoys.changes.some(change => change.id === item.id && !change.synchronized)}
                         data={{
-                            synchronized: !state.tables.rescue_buoys.changes.some(change => change.id === item.id && !change.synchronized),
+                            synchronized: !state.tables.rescue_buoys.changes.some((change: { id: any; synchronized: boolean }) => change.id === item.id && !change.synchronized),
                             selected: (editState.focused?.id === item.id),
                             onCloseClick: closeInfoWindow,
                             onEditClick: () => handleEditClick(item),
@@ -1217,7 +905,7 @@ const SimpleMap = ({serverData}: {
                             }
                             data={
                                 {
-                                    synchronized: !state.tables.nsri_stations.changes.some(change => change.id.toString() === item.id.toString() && !change.synchronized),
+                                    synchronized: !state.tables.nsri_stations.changes.some((change: { id: any; synchronized: boolean }) => change.id === item.id && !change.synchronized),
                                     onCloseClick: closeInfoWindow,
                                     selected: editState.focused?.id === item.id,
                                     onEditClick: () => handleEditClick(item),

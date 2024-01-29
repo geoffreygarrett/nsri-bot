@@ -16,7 +16,8 @@ import {
 import {MapPinIcon} from "@heroicons/react/24/outline";
 import {useContext, useEffect, useState} from "react";
 import {copyToClipboard, formatDD, formatDMM, formatDMS} from "@/lib/utils";
-import {AppContext, getPermissions, useAuthorizedCallback} from "@/app/map/map";
+import {getPermissions, useAuthorizedCallback} from "@/app/map/map";
+import {AppContext} from "@/app/app";
 import {insertItemAction, SOURCE} from "@/store/table-reducer";
 import * as turf from '@turf/turf'
 

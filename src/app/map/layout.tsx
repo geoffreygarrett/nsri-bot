@@ -11,7 +11,7 @@ import {MapContextMenu} from "@/components/map-context/map-context-menu";
 import {useTheme} from "next-themes";
 import {MapProvider, useMapContext} from "@/components/map-context/map-context";
 import MapLoading from "@/app/map/loading";
-import { AppProvider} from "@/app/map/map";
+import { AppProvider} from "@/app/app";
 import {InfoWindowProvider} from "@/app/map/_components/integrations/google-maps/draw/info-window/info-window-context";
 import {InfoWindow} from "@/app/map/_components/integrations/google-maps/draw/info-window/info-window";
 

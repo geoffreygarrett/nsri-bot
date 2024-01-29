@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
 import SettingsControl from "./settings-control";
-import {AppContext} from "@/app/map/map";
+import {AppContext} from "@/app/app";
 
 export const MapSettingsControl = ({className, onSettingChange}: { className?: string, onSettingChange?: (id: string, enabled: boolean) => void }) => {
     const {state, dispatch} = useContext(AppContext);

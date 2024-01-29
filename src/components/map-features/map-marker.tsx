@@ -18,7 +18,7 @@ import {useTheme} from "next-themes";
 import {toast} from "sonner";
 import {useInfoWindowContext} from "@/app/map/_components/integrations/google-maps/info-window-provider";
 import {debounce} from "next/dist/server/utils";
-import {AppContext} from "@/app/map/map";
+import {AppContext} from "@/app/app";
 import MapMouseEvent = google.maps.MapMouseEvent;
 import {Point} from "geojson";
 

@@ -108,20 +108,24 @@ export const AvatarMenu = ({children, items}: { children: React.ReactNode, items
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild className={"flex h-9 items-center"}>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full" aria-label="User menu">
                     {children}
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" sideOffset={5}>
-                <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{userInfo.nickname}</p>
-                        <p className="text-xs leading-none text-muted-foreground">
-                            {userInfo.identity}
-                        </p>
-                    </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator/>
+                {user && (
+                    <>
+                        <DropdownMenuLabel className="font-normal">
+                            <div className="flex flex-col space-y-1">
+                                <p className="text-sm font-medium leading-none">{userInfo.nickname}</p>
+                                <p className="text-xs leading-none text-muted-foreground">
+                                    {userInfo.identity}
+                                </p>
+                            </div>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator/>
+                    </>
+                )}
                 {items?.map((item, index) => (
                     <React.Fragment key={`${item.label}-${index}`}>
                         {item.topSeparator && <DropdownMenuSeparator/>}

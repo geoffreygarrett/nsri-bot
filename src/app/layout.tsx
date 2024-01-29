@@ -4,9 +4,9 @@ import './globals.css'
 import Link from "next/link";
 import React from "react";
 import {Toaster} from "@/components/ui/sonner"
-import {ThemeProvider} from "@/components/layout/theme-provider";
-import {ThemeSwitcher} from "@/components/layout/theme-switcher";
-import Navbar from "@/components/layout/navbar";
+import {ThemeProvider} from "@/app/_components/layout/theme-provider";
+import {ThemeSwitcher} from "@/app/_components/layout/theme-switcher";
+import Navbar from "@/app/_components/layout/navbar";
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 
 const inter = Inter({subsets: ['latin']})

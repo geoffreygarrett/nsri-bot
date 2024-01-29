@@ -1,6 +1,6 @@
 'use client'
 
-import {SessionContextProvider, useUser} from "@supabase/auth-helpers-react";
+import {SessionContextProvider, useSession, useUser} from "@supabase/auth-helpers-react";
 import {createClientComponentClient} from "@supabase/auth-helpers-nextjs";
 import {Database} from "@/types/supabase";
 import React, {useEffect} from "react";
@@ -12,10 +12,11 @@ import {useFetch} from "@/hooks/use-fetch";
 const PermissionWrapper: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const {setUser} = usePermission();
     const user = useUser();
+    const session = useSession();
     const {loading, error, value} = useFetch(
         `/api/roles-permissions`,
         {},
-        []
+        [session, user]
     )
 
     useEffect(() => {

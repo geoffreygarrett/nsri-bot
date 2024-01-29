@@ -14,7 +14,7 @@ const DEFAULT_OPTIONS = {
 // }
 
 // type with generic to allow for type inference
-export function useFetch<T = unknown>(url: string, options = {}, dependencies = []) {
+export function useFetch<T = unknown>(url: string, options = {}, dependencies : any[] = []) {
     return useAsync<T>(() => {
         return fetch(url, {...DEFAULT_OPTIONS, ...options}).then(res => {
             if (res.ok) return res.json()
