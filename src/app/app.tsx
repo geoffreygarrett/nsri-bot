@@ -279,7 +279,7 @@ export const AppProvider = ({children}: { children: React.ReactNode }) => {
 
     const state = useMemo(() => combineState(mapState, tableState), [mapState, tableState]);
 
-    console.log(state)
+    console.log(state);
     useEffect(() => {
         console.log('state changed')
     }, [state]);
