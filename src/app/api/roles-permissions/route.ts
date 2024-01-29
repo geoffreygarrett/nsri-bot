@@ -6,6 +6,8 @@ import {cookies} from "next/headers";
 import {z} from "zod";
 import {createErrorResponse} from "@/app/api/helper";
 
+// Force dynamic, as we are using cookies
+export const dynamic = 'force-dynamic';
 
 /**
  * GET Endpoint to fetch roles and permissions.

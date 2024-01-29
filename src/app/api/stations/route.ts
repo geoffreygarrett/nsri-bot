@@ -2,13 +2,13 @@ import {NextRequest, NextResponse} from "next/server";
 import {createRouteHandlerClient, SupabaseClient} from "@supabase/auth-helpers-nextjs";
 import {Database, Tables} from "@/types/supabase";
 import {cookies} from "next/headers";
+import supabase from "@/supabase";
 
 
 export async function GET(request: NextRequest) {
 
     // Create Supabase client
-    const supabase = createRouteHandlerClient<Database>({cookies: () => cookies()});
-
+    // const supabase = createRouteHandlerClient<Database>({cookies: () => cookies()});
 
     // Get request body
     const {data, error} = await supabase

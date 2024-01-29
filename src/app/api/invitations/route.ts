@@ -12,6 +12,9 @@ import {
 
 const THIS_ENDPOINT = `/api/invitations`;
 
+// Force dynamic, as we are using cookies
+export const dynamic = 'force-dynamic';
+
 /**
  * GET Endpoint to fetch invitations.
  *
