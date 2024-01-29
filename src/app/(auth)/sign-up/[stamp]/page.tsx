@@ -32,7 +32,6 @@ export const dynamic = 'force-dynamic';
 
 
 export default async function Page({params}: { params: { stamp: string } }) {
-    const supabase = createServerComponentClient({cookies: () => cookies()});
     const response = await makeInvitationsQuery(supabase)
         .eq('stamp_id', params.stamp)
         .single();
