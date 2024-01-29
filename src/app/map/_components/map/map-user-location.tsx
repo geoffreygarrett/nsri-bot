@@ -1,6 +1,5 @@
 import {AdvancedMarker, useMap} from "@vis.gl/react-google-maps";
 import React, {useEffect} from "react";
-import {useLocation} from "../../../../../dev/location-provider";
 
 function UserErrorCircle({userLocation, userLocationError, map}: {
     userLocation: google.maps.LatLngLiteral,
