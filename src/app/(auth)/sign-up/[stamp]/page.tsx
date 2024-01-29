@@ -30,7 +30,6 @@ export async function generateStaticParams() {
 
 export const dynamic = 'force-dynamic';
 
-
 export default async function Page({params}: { params: { stamp: string } }) {
     const response = await makeInvitationsQuery(supabase)
         .eq('stamp_id', params.stamp)
