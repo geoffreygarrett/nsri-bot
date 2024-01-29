@@ -1,14 +1,11 @@
 import SignupForm from "@/app/(auth)/sign-up/sign-up";
-import {Card, CardHeader, CardContent} from "@/components/ui/card";
-import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
+import {CardHeader, CardContent} from "@/components/ui/card";
 import ShortUniqueId from "short-unique-id";
-import NotFound from "next/dist/client/components/not-found-error";
 import {notFound} from "next/navigation";
-import {invitationsQuery, makeInvitationsQuery} from "@/types/queries";
+import {makeInvitationsQuery} from "@/types/queries";
 import ErrorPage from "@/components/error-page";
 import React from "react";
 import supabase from "@/supabase";
-// import {cookies} from "next/headers";
 
 export const revalidate = 60
 
@@ -23,7 +20,7 @@ export async function generateStaticParams() {
     }
     return invitations?.map((invitation: any) => {
         return {
-            code: invitation.stamp_id
+            stamp: invitation.stamp_id
         }
     })
 }

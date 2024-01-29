@@ -865,23 +865,23 @@ export const useRealtimeChanges = <K extends keyof Database['public']['Tables']>
     }, [table, dispatch, channelName, timeout, enabled, supabase]);
 };
 
-namespace store {
-
-    // const insertItem = <T extends keyof Database['public']['Tables']>(table: T, item: Tables<T>, source: `${SOURCE}`): InsertItemAction<T> => {
-    //     const {state, dispatch} = useTableState(table);
-    //     const oldItem = {};
-    //     const newItem = item;
-    //     const [column, value] = getFirstKeyAndValue(item);
-    //     dispatch({
-    //         type: ACTION_TYPES.INSERT_ITEM,
-    //         table,
-    //         payload: item,
-    //         source
-    //     });
-    //
-    // }
-
-}
+// namespace store {
+//
+//     // const insertItem = <T extends keyof Database['public']['Tables']>(table: T, item: Tables<T>, source: `${SOURCE}`): InsertItemAction<T> => {
+//     //     const {state, dispatch} = useTableState(table);
+//     //     const oldItem = {};
+//     //     const newItem = item;
+//     //     const [column, value] = getFirstKeyAndValue(item);
+//     //     dispatch({
+//     //         type: ACTION_TYPES.INSERT_ITEM,
+//     //         table,
+//     //         payload: item,
+//     //         source
+//     //     });
+//     //
+//     // }
+//
+// }
 
 
 export const combineDispatch = (...dispatches: Dispatch<any>[]) => (action: any) =>

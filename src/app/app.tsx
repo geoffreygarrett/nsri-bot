@@ -30,7 +30,6 @@ const actionTypes = {
 };
 
 
-
 interface Toggle {
     enabled: boolean;
     loading: boolean;
@@ -172,7 +171,6 @@ const reducer = (state: MapState, action: MapAction): MapState => {
 };
 
 
-
 const initialState: MapState = {
     info_window: {
         id: null,
@@ -229,7 +227,20 @@ import {Algorithm, AlgorithmOptions} from "@googlemaps/markerclusterer";
 // Define a function to set up real-time updates
 export const AppProvider = ({children}: { children: React.ReactNode }) => {
     "use client";
-    const [localTables, setLocalTables] = useLocalStorage(TABLE_STATE_STORAGE_KEY, null);
+    const [localTables, setLocalTables] = useLocalStorage(TABLE_STATE_STORAGE_KEY, {
+        rescue_buoys: {
+            ...createInitialState('rescue_buoys').tables.rescue_buoys,
+            values: [], changes: [], realtime: {enabled: true}, filters: [
+                createFilter('rescue_buoys')('status', 'neq', 'UNKNOWN')
+            ]
+        },
+        nsri_stations: {
+            ...createInitialState('nsri_stations').tables.nsri_stations,
+            values: [], changes: [], realtime: {enabled: true}
+        }
+
+    });
+
     // const localStorageChanges = localStorage.getItem(TABLE_STATE_STORAGE_KEY);
     const supabase = useSupabaseClient<Database>();
 
@@ -267,13 +278,20 @@ export const AppProvider = ({children}: { children: React.ReactNode }) => {
     );
 
     const state = useMemo(() => combineState(mapState, tableState), [mapState, tableState]);
-    console.log("state", state);
+
+    console.log(state)
+    useEffect(() => {
+        console.log('state changed')
+    }, [state]);
     const dispatch = useCallback(combineDispatch(mapDispatch, tableDispatch), [mapDispatch, tableDispatch]);
 
     // After reducer logic, save the changes to local storage
     useEffect(() => {
+        if (state.tables) {
+            setLocalTables(state.tables);
+        }
         // localStorage.setItem(TABLE_STATE_STORAGE_KEY, JSON.stringify(state.tables));
-        setLocalTables(state.tables);
+        // setLocalTables(state.tables);
     }, [setLocalTables, state.tables]);
 
 
