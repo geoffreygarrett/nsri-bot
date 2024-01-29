@@ -353,22 +353,29 @@ export const AppProvider = ({children}: { children: React.ReactNode }) => {
     }, [setLocalTables, state.tables]);
 
 
-    // Use hook for location
-    useLocation(
-        {
-            ...state.settings.location,
-            enabled: state.settings.toggles.enable_location.enabled,
-            onLocationChange: (position: GeolocationPosition) => {
-                dispatch({type: actionTypes.SET_LOCATION, payload: {...state.location, value: position}});
-            },
-            onError: (error: GeolocationPositionError) => {
-                dispatch({type: actionTypes.SET_LOCATION, payload: {...state.location, error: error}});
-            },
-            onLoadingChange: (loading: boolean) => {
-                dispatch({type: actionTypes.SET_LOCATION, payload: {...state.location, loading: loading}});
-            }
+    const geolocation = useGeolocation();
+    useEffect(() => {
+        if (geolocation.latitude && geolocation.longitude) {
+            dispatch({
+                type: actionTypes.SET_LOCATION, payload: {
+                    value: {
+                        coords: {
+                            latitude: geolocation.latitude,
+                            longitude: geolocation.longitude,
+                            accuracy: geolocation.accuracy,
+                            altitude: geolocation.altitude,
+                            altitudeAccuracy: geolocation.altitudeAccuracy,
+                            heading: geolocation.heading,
+                            speed: geolocation.speed
+                        },
+                        timestamp: geolocation.timestamp
+                    },
+                    loading: false,
+                    error: null
+                }
+            });
         }
-    );
+    }, [geolocation, dispatch]);
 
     useRealtimeChanges({
         supabase,
@@ -394,7 +401,7 @@ export const AppProvider = ({children}: { children: React.ReactNode }) => {
         </AppContext.Provider>
     );
 };
-import {useDebounce, useMediaQuery} from "@uidotdev/usehooks";
+import {useDebounce, useGeolocation, useMediaQuery, useNetworkState} from "@uidotdev/usehooks";
 import {MapMenubar} from "./_components/map/map-controls/menubar";
 import {useLocation} from "@/hooks/use-location";
 import {BuoyInfoWindowContent, StationInfoWindowContent} from "./_components/map/buoy-info-window-content";
@@ -561,54 +568,87 @@ const SimpleMap = ({serverData}: {
         return aggregatedChanges;
     }, [state.tables]);
 
-
-    const sync = useCallback(<T extends 'rescue_buoys' | 'nsri_stations'>() => {
+    const sync = useCallback(async () => {
         for (const table of ['rescue_buoys', 'nsri_stations'] as const) {
+            try {
+                const aggregatedChanges: Record<string, Change<'rescue_buoys' | 'nsri_stations'>> = getAggregatedChanges(table);
+                const upserts = Object.values(aggregatedChanges).filter(change =>
+                    change.type === 'INSERT' || change.type === 'UPDATE'
+                ).map(change => change.newItem as Tables<'rescue_buoys'> | Tables<'nsri_stations'>);
 
-            const aggregatedChanges: Record<string, Change<'rescue_buoys' | 'nsri_stations'>> = getAggregatedChanges(table);
-            console.log('aggregatedChanges', aggregatedChanges);
-
-            // Group insert and update changes for batch processing
-            const upserts = Object.values(aggregatedChanges).flat().filter(change =>
-                change.type === 'INSERT' || change.type === 'UPDATE'
-            ).map(change => change.newItem as Tables<'rescue_buoys'> | Tables<'nsri_stations'>);
-
-            // Batch insert and update operations
-            if (upserts.length > 0 && upserts) {
-                console.log('Batch INSERT or UPDATE', upserts);
-                console.log(upserts);
-                supabase.from(table).upsert(upserts).then(({data, error}) => {
-                    if (error) {
-                        console.error(error);
-                        toast.error(error.message);
-                    } else {
-                        upserts.forEach(item => {
-                            dispatch(updateChangeStatusAction(table, item.id.toString(), true));
-                        });
-                        toast.success('Batch operation successful');
-                    }
-                });
-            }
-
-            // Process delete operations individually
-            Object.values(aggregatedChanges).flat().forEach(change => {
-                if (change.type === 'DELETE') {
-                    console.log('DELETE', change);
-                    supabase.from(table).delete().match({id: change.id}).then(({data, error}) => {
-                        if (error) {
-                            console.error(error);
-                            toast.error(error.message);
-                        } else {
-                            dispatch(updateChangeStatusAction(table, change.id.toString(), true));
-                            toast.success('Delete operation successful');
-                        }
+                if (upserts.length > 0 && upserts && upserts[0]) {
+                    const {data, error} = await supabase.from(table).upsert(upserts);
+                    if (error) throw error;
+                    upserts.forEach(item => {
+                        dispatch(updateChangeStatusAction(table, item.id.toString(), true));
                     });
+                    toast.success('Batch operation successful');
                 }
-            });
 
-
+                // Process delete operations
+                const deletes = Object.values(aggregatedChanges).filter(change => change.type === 'DELETE');
+                for (const del of deletes) {
+                    const {data, error} = await supabase.from(table).delete().match({id: del.id});
+                    if (error) throw error;
+                    dispatch(updateChangeStatusAction(table, del.id.toString(), true));
+                    toast.success('Delete operation successful');
+                }
+            } catch (error: any) {
+                console.error(error);
+                toast.error(`Sync error: ${error.message}`);
+                // Handle specific error scenarios here
+            }
         }
     }, [getAggregatedChanges, dispatch]);
+
+
+    // const sync = useCallback(<T extends 'rescue_buoys' | 'nsri_stations'>() => {
+    //     for (const table of ['rescue_buoys', 'nsri_stations'] as const) {
+    //
+    //         const aggregatedChanges: Record<string, Change<'rescue_buoys' | 'nsri_stations'>> = getAggregatedChanges(table);
+    //         console.log('aggregatedChanges', aggregatedChanges);
+    //
+    //         // Group insert and update changes for batch processing
+    //         const upserts = Object.values(aggregatedChanges).flat().filter(change =>
+    //             change.type === 'INSERT' || change.type === 'UPDATE'
+    //         ).map(change => change.newItem as Tables<'rescue_buoys'> | Tables<'nsri_stations'>);
+    //
+    //         // Batch insert and update operations
+    //         if (upserts.length > 0 && upserts) {
+    //             console.log('Batch INSERT or UPDATE', upserts);
+    //             console.log(upserts);
+    //             supabase.from(table).upsert(upserts).then(({data, error}) => {
+    //                 if (error) {
+    //                     console.error(error);
+    //                     toast.error(error.message);
+    //                 } else {
+    //                     upserts.forEach(item => {
+    //                         dispatch(updateChangeStatusAction(table, item.id.toString(), true));
+    //                     });
+    //                     toast.success('Batch operation successful');
+    //                 }
+    //             });
+    //         }
+    //
+    //         // Process delete operations individually
+    //         Object.values(aggregatedChanges).flat().forEach(change => {
+    //             if (change.type === 'DELETE') {
+    //                 console.log('DELETE', change);
+    //                 supabase.from(table).delete().match({id: change.id}).then(({data, error}) => {
+    //                     if (error) {
+    //                         console.error(error);
+    //                         toast.error(error.message);
+    //                     } else {
+    //                         dispatch(updateChangeStatusAction(table, change.id.toString(), true));
+    //                         toast.success('Delete operation successful');
+    //                     }
+    //                 });
+    //             }
+    //         });
+    //
+    //
+    //     }
+    // }, [getAggregatedChanges, dispatch]);
 
     const reconcileData = useCallback(<T extends { id: string | number; updated_at: string }>(
         serverData: T[],
@@ -711,22 +751,11 @@ const SimpleMap = ({serverData}: {
         open: false
     });
 
-    // useEffect(() => {
-    //     const result = supabase.from('rescue_buoys').select('*').csv().then(({data, error}) => {
-    //         if (error) {
-    //             console.error(error);
-    //         } else {
-    //             console.log(data);
-    //         }
-    //     });
-    // }, [supabase]);
-
     useEffect(() => {
         console.log('editState', editState);
         console.log('editState.focused?.id', editState.focused?.id);
 
     }, [editState]);
-
 
     const handleEditClick = useAuthorizedCallback(
         useCallback((item: Tables<'rescue_buoys'> | Tables<'nsri_stations'>) => {
@@ -765,8 +794,8 @@ const SimpleMap = ({serverData}: {
         });
     };
 
+    // Keep the buoy updated when it changes
     useEffect(() => {
-        // if editState.focused is changed, update it,
         if (!editState.focused) return;
         const item = editState.focused;
         const {id} = item;
@@ -804,6 +833,8 @@ const SimpleMap = ({serverData}: {
         if (isStation(item)) return `Station ${item.id.toString().replace(/^0+/, "")}`;
         return 'Unknown';
     };
+
+    const network = useNetworkState();
 
     const buttonsConfig: (editState: EditState, setEditState: React.Dispatch<React.SetStateAction<EditState>>) => EditNavButton[] = (editState, setEditState) => [
         // Define your buttons here
@@ -847,7 +878,7 @@ const SimpleMap = ({serverData}: {
             icon: <PencilIcon className="h-6 w-6 text-gray-600 dark:text-gray-200"/>,
             // onClick: () => setEditState(prevState => ({...prevState, formOpen: !prevState.formOpen})),
             panelContent: <RescueBuoyForm buoy={editState.focused as Tables<'rescue_buoys'>}
-                                          className={cn("flex flex-col space-y-2 p-2 w-full h-screen sm:h-auto sm:bottom-0", glassEffect)}
+                                          className={cn("flex flex-col space-y-2 p-2 w-full h-screen sm:h-auto sm:bottom-0 overflow-auto", glassEffect)}
                                           onClose={() => setEditState(prevState => ({
                                               ...prevState,
                                               formOpen: false
@@ -915,26 +946,6 @@ const SimpleMap = ({serverData}: {
 
     const drawingLib = useMapsLibrary('drawing');
 
-    // const handleStationPolygonInsertAt = useCallback((index: number, _: google.maps.LatLng, item: Tables<'nsri_stations'>) => {
-    //     if (!item.service_area || !polygon) return;
-    //
-    //     const path = polygon.getPath();
-    //     const coordinates = path.getArray().map(latlng => [latlng.lng(), latlng.lat()]);
-    //
-    //     const updatedServiceArea = {
-    //         ...item.service_area,
-    //         coordinates: [coordinates]
-    //     };
-
-    //     const updatedItem = {
-    //         ...item,
-    //         service_area: updatedServiceArea,
-    //         updated_at: new Date().toISOString()
-    //     };
-    //
-    //     dispatch(updateItemAction('nsri_stations', {column: 'id', value: item.id, data: updatedItem}, 'client'));
-    // }, [dispatch, polygon]);
-
     const onPolygonComplete = useCallback((polygon: google.maps.Polygon) => {
         if (!editState.focused || !isStation(editState.focused)) return;
         const newPolygonPath = polygon.getPath().getArray().map(pos => [pos.lng(), pos.lat()]);
@@ -957,91 +968,7 @@ const SimpleMap = ({serverData}: {
     }, [dispatch, editState.focused]);
 
 
-    // const FpsComponent = ({quality, fps}: { quality: Record<string, any>, fps: number }) => {
-    //     // const {levelOfDetail, resetLOD} = useFps();
-    //     // const fps = useFPS();
-    //     // const qualityLevels: QualityLevels = [
-    //     //     {level: LEVEL_OF_DETAIL.HIGH, thresholdFPS: 60},
-    //     //     {level: LEVEL_OF_DETAIL.MEDIUM, thresholdFPS: 30},
-    //     //     {level: LEVEL_OF_DETAIL.LOW, thresholdFPS: 15},
-    //     // ];
-    //
-    //     // const qualityLevels = {
-    //     //     [LEVEL_OF_DETAIL.HIGH]: {
-    //     //         name: 'high', level: LEVEL_OF_DETAIL.HIGH
-    //     //     },
-    //     //     [LEVEL_OF_DETAIL.MEDIUM]: {
-    //     //         name: 'medium', level: LEVEL_OF_DETAIL.MEDIUM
-    //     //     },
-    //     //     [LEVEL_OF_DETAIL.LOW]: {
-    //     //         name: 'low', level: LEVEL_OF_DETAIL.LOW
-    //     //     },
-    //     // }
-    //     //
-    //     // const quality = useAdaptiveQuality(qualityLevels, 10, 20, 3000); // threshold = 20, adjustmentDelay = 3000ms
-    //
-    //     return (
-    //         <Card className="w-20">
-    //             <CardContent>
-    //                 <div className="flex flex-col space-y-2">
-    //                     <span className="text-sm font-semibold">FPS</span>
-    //                     {/*<span className="text-2xl font-semibold">{levelOfDetail}</span>*/}
-    //                     {/*<span className="text-2xl font-semibold">{quality.name}</span>*/}
-    //                     <span className="text-2xl font-semibold">{fps.toFixed(0)}</span>
-    //                     {/*<Button onClick={resetLOD} className="text-sm py-1 px-2">*/}
-    //                     {/*    Reset*/}
-    //                     {/*</Button>*/}
-    //                 </div>
-    //             </CardContent>
-    //         </Card>
-    //     )
-    // }
-
     const isMobile = useMediaQuery("(max-width: 768px)"); // Adjust as needed for your mobile breakpoint
-    // const fps = useFPS(10);
-    //
-    // //
-    // // Use hook for FPS
-    // const {quality: _quality, fps} = useAdaptiveQuality(
-    //     {
-    //         [LEVEL_OF_DETAIL.HIGH]: {
-    //             name: 'high', level: LEVEL_OF_DETAIL.HIGH
-    //         },
-    //         [LEVEL_OF_DETAIL.MEDIUM]: {
-    //             name: 'medium', level: LEVEL_OF_DETAIL.MEDIUM
-    //         },
-    //         [LEVEL_OF_DETAIL.LOW]: {
-    //             name: 'low', level: LEVEL_OF_DETAIL.LOW
-    //         },
-    //     }, 5, 25, 5000); // threshold = 20, adjustmentDelay = 3000ms
-
-    // const quality = useMemo(() => _quality, [_quality]);
-
-    // useEffect(() => {
-    //     if (!quality) return;
-    //     dispatch({type: actionTypes.SET_QUALITY, payload: quality});
-    // }, [dispatch]);
-
-    // const fps = useFPS(2);
-
-
-    // const [isHighPerformance, setIsHighPerformance] = useState(false);
-
-    // useEffect(() => {
-    //     // Example condition for high-performance (can be replaced with your own logic)
-    //     const highPerformance = navigator.hardwareConcurrency > 4; // For instance, systems with more than 4 logical processors
-    //
-    //     console.log('highPerformance', highPerformance);
-    //     console.log('navigator.hardwareConcurrency', navigator.hardwareConcurrency);
-    //     setIsHighPerformance(highPerformance);
-    //
-    //     // Set the custom attribute on the body element
-    //     if (highPerformance) {
-    //         document.body.setAttribute('data-performance', 'high');
-    //     } else {
-    //         document.body.removeAttribute('data-performance');
-    //     }
-    // }, []);
 
     useEffect(() => {
         // const highPerformance = navigator.hardwareConcurrency > 4;
@@ -1052,14 +979,6 @@ const SimpleMap = ({serverData}: {
             htmlElement.classList.remove('hp');
         }
     }, [state.settings.toggles.enable_performance_mode]);
-
-
-    //
-    // useEffect(() => {
-    //     console.log('state.quality?.level', state.quality?.level)
-    //     console.log('state.quality', state.quality)
-    // }, [state.quality]);
-    // const quality = {name: 'high', level: LEVEL_OF_DETAIL.HIGH};
 
     return (
         <>

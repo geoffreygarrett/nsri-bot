@@ -38,7 +38,7 @@ function formatDate(dateString: string): string {
 
 import xmlFormat from 'xml-formatter';
 import {isRescueBuoy} from "@/app/map/map";
-import {BuoyStatus} from "@prisma/client";
+import {BuoyStatus} from "@/types/temp";
 
 
 export const exportCsv = (data_export: IMarker[], name: string = 'Locations'): void => {

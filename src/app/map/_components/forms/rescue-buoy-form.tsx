@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {useForm, Controller} from 'react-hook-form';
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
@@ -41,9 +41,9 @@ export function RescueBuoyForm({buoy, onClose, className}: { buoy: any, onClose:
             lng: Number(buoy.location.coordinates[0]),
             alt: Number(buoy.location.coordinates[2]),
             status: buoy.status,
-            description: "",
+            description: buoy.description ? buoy.description : "",
             comment: "",
-            buoy_id: 0,
+            buoy_id: buoy.buoy_id,
             image: "",
             // metadata: JSON.stringify(buoy.metadata, null, 2),
         },
@@ -81,9 +81,20 @@ export function RescueBuoyForm({buoy, onClose, className}: { buoy: any, onClose:
     }
 
     // Refined handleImageChange function
+    // const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     if (event.target.files?.[0]) {
+    //         setImage(URL.createObjectURL(event.target.files[0]));
+    //     }
+    // };
+    const [imageFile, setImageFile] = useState<File | null>(null); // New state for the file object
+    const [imagePreview, setImagePreview] = useState<string | null>(buoy.image_url); // For image preview
+
+    // Enhanced handleImageChange for immediate preview and file state update
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files?.[0]) {
-            setImage(URL.createObjectURL(event.target.files[0]));
+        const file = event.target.files?.[0];
+        if (file) {
+            setImagePreview(URL.createObjectURL(file));
+            setImageFile(file);
         }
     };
 
@@ -98,6 +109,8 @@ export function RescueBuoyForm({buoy, onClose, className}: { buoy: any, onClose:
                 ...buoy,
                 image_url: imageUrl,
                 name: values.name,
+                description: values.description,
+                buoy_id: values.buoy_id,
                 location: {type: "Point", coordinates: [values.lng, values.lat, values.alt]},
                 status: values.status,
                 updated_at: new Date().toISOString(),
@@ -135,16 +148,16 @@ export function RescueBuoyForm({buoy, onClose, className}: { buoy: any, onClose:
                             <CardDescription>Fill in the general information about the buoy.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-2 p-4">
-                            <div className="flex justify-center">
-                                {image ? (
-                                    <Image src={image} alt="Buoy" width={200} height={200} objectFit="cover"/>
-                                ) : (
-                                    <div
-                                        className="w-48 h-48 flex items-center justify-center bg-gray-200 dark:bg-gray-800">
-                                        <CameraIcon className="h-24 w-24 text-gray-400" aria-hidden="true"/>
-                                    </div>
-                                )}
-                            </div>
+                            {/*<div className="flex justify-center">*/}
+                            {/*    {image ? (*/}
+                            {/*        <Image src={image} alt="Buoy" width={200} height={200} objectFit="cover"/>*/}
+                            {/*    ) : (*/}
+                            {/*        <div*/}
+                            {/*            className="w-48 h-48 flex items-center justify-center bg-gray-200 dark:bg-gray-800">*/}
+                            {/*            <CameraIcon className="h-24 w-24 text-gray-400" aria-hidden="true"/>*/}
+                            {/*        </div>*/}
+                            {/*    )}*/}
+                            {/*</div>*/}
                             <FormField
                                 control={form.control}
                                 name="image"

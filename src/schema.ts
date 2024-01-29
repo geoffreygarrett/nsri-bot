@@ -1,6 +1,6 @@
 import * as z from "zod";
 import {CountryCallingCode, CountryCode, isPossiblePhoneNumber, isValidPhoneNumber, parse} from "libphonenumber-js";
-import {BuoyStatus} from "@prisma/client";
+import {BuoyStatus} from "@/types/temp";
 
 // State for pin
 const e164Regex = new RegExp("^\\+[1-9]\\d{1,14}$");
@@ -39,7 +39,7 @@ export const signUpSchema = z.object({
 const buoyStatusValues = Object.values(BuoyStatus) as [BuoyStatus, ...BuoyStatus[]];
 
 export const buoyStatusEnum = z.enum(buoyStatusValues);
-const MAX_FILE_SIZE = 5000000;
+const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 
@@ -61,7 +61,7 @@ export const rescueBuoySchema = z.object({
             (file) => {
                 if (!file) return true;
                 return file?.size <= MAX_FILE_SIZE
-            }, `Max image size is 5MB.`)
+            }, `Max image size is 10MB.`)
         .refine(
             (file) => {
                 if (!file) return true;

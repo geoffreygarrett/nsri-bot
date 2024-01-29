@@ -4,6 +4,7 @@ import {Card, CardContent} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {CameraIcon, PencilSquareIcon, XMarkIcon} from "@heroicons/react/24/outline";
 import Image from "next/image";
+import {ImageDialog} from "@/app/map/_components/map/image";
 
 export const BuoyInfoWindowContent = ({
                                           item,
@@ -43,28 +44,29 @@ export const BuoyInfoWindowContent = ({
                             className="h-6 w-6 text-gray-600 dark:text-gray-200"/>
                     </Button>
                 </div>
-                <div className="aspect-square">
-                    {
-                        item?.image_url ? (
-                            <div className="aspect-square absolute inset-0">
-                                <Image
-                                    src={item.image_url}
-                                    alt="Buoy"
-                                    layout="fill"
-                                    objectFit="cover" // Changed from 'contain' to 'cover' for cropping
-                                    objectPosition="center" // Ensures the image is centered
-                                    className="aspect-square"
-                                    onDragStart={(e) => e.preventDefault()}
-                                />
-                            </div>
-                        ) : (
-                            <div
-                                className="absolute inset-0 flex aspect-square w-full items-center justify-center bg-gray-200 dark:bg-gray-800">
-                                <CameraIcon className="h-12 w-12 text-gray-400" aria-hidden="true"/>
-                            </div>
-                        )
-                    }
-                </div>
+                <ImageDialog item={item}/>
+                {/*<div className="aspect-square">*/}
+                {/*    {*/}
+                {/*        item?.image_url ? (*/}
+                {/*            <div className="aspect-square absolute inset-0">*/}
+                {/*                <Image*/}
+                {/*                    src={item.image_url}*/}
+                {/*                    alt="Buoy"*/}
+                {/*                    layout="fill"*/}
+                {/*                    objectFit="cover" // Changed from 'contain' to 'cover' for cropping*/}
+                {/*                    objectPosition="center" // Ensures the image is centered*/}
+                {/*                    className="aspect-square"*/}
+                {/*                    onDragStart={(e) => e.preventDefault()}*/}
+                {/*                />*/}
+                {/*            </div>*/}
+                {/*        ) : (*/}
+                {/*            <div*/}
+                {/*                className="absolute inset-0 flex aspect-square w-full items-center justify-center bg-gray-200 dark:bg-gray-800">*/}
+                {/*                <CameraIcon className="h-12 w-12 text-gray-400" aria-hidden="true"/>*/}
+                {/*            </div>*/}
+                {/*        )*/}
+                {/*    }*/}
+                {/*</div>*/}
 
                 <div className="p-4">
                     <h3 className="text-lg font-semibold text-gray-900">{item?.name}</h3>

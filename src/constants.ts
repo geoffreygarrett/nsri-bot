@@ -9,7 +9,7 @@ export const HOME_PATH = "/";
 
 // export const glassEffect = "transform-gpu bg-white rounded border-opacity-30 dark:border-opacity-30";
 // export const glassEffect = "transform-gpu bg-white bg-opacity-40 rounded drop-shadow-lg dark:bg-opacity-30 border-opacity-30 dark:border-opacity-30";
-export const glassEffect = "bg-white dark:bg-zinc-800 bg-opacity-40 hp:backdrop-blur-md rounded drop-shadow-lg hp:dark:bg-opacity-30 hp:border-opacity-30 hp:dark:border-opacity-30 opt-blur";
+export const glassEffect = "bg-white dark:bg-zinc-800 hp:bg-opacity-40 hp:backdrop-blur-md rounded drop-shadow-lg hp:dark:bg-opacity-30 hp:border-opacity-30 hp:dark:border-opacity-30 opt-blur";
 // export const glassEffect = "bg-white dark:bg-zinc-800 bg-opacity-40 backdrop-blur-md rounded drop-shadow-lg dark:bg-opacity-30 border-opacity-30 dark:border-opacity-30 opt-blur";
 // export const glassEffect = "transform-gpu bg-white dark:bg-zinc-800 bg-opacity-40 backdrop-blur-md rounded drop-shadow-lg dark:bg-opacity-30 border-opacity-30 dark:border-opacity-30";
 // export const glassEffect = "transform-gpu bg-white dark:bg-zinc-800 bg-opacity-40 backdrop-blur-md rounded drop-shadow-lg dark:bg-opacity-30 border-opacity-30 dark:border-opacity-30";

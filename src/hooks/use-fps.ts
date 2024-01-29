@@ -1,5 +1,4 @@
-import {useRef, useState} from "react";
-import useRafFn from "./use-raf-fn";
+import { useEffect, useRef, useState } from "react";
 
 export interface UseFpsOptions {
     /**
@@ -9,23 +8,34 @@ export interface UseFpsOptions {
     every?: number;
 }
 
-export function useFps(options: UseFpsOptions = {every: 10}): number {
+export function useFps({ every = 20 }: UseFpsOptions = {}): number {
     const [fps, setFps] = useState(0);
-    const every = options.every ?? 10;
+    const frameCount = useRef(0);
+    const lastTime = useRef(performance.now());
+    const fpsRef = useRef(0);
 
-    const last = useRef(performance.now());
-    const ticks = useRef(0);
+    useEffect(() => {
+        const update = () => {
+            frameCount.current += 1;
+            if (frameCount.current >= every) {
+                const now = performance.now();
+                const delta = now - lastTime.current;
+                fpsRef.current = (frameCount.current * 1000) / delta;
 
-    useRafFn(() => {
-        ticks.current += 1;
-        if (ticks.current >= every) {
-            const now = performance.now();
-            const diff = now - last.current;
-            setFps(Math.round(1000 / (diff / ticks.current)));
-            last.current = now;
-            ticks.current = 0;
-        }
-    });
+                setFps(fpsRef.current);  // Update state less frequently
+                frameCount.current = 0;
+                lastTime.current = now;
+            }
+
+            requestAnimationFrame(update);
+        };
+
+        const rafId = requestAnimationFrame(update);
+
+        return () => {
+            cancelAnimationFrame(rafId);  // Clean up
+        };
+    }, [every]);
 
     return fps;
 }

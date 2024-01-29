@@ -31,7 +31,7 @@ const AdminView: React.FC = () => {
     const [invitations, setInvitations] = useState<InvitationsQueryType>([]);
     const [sendingInvitationSkeletons, setSendingInvitationSkeletons] = useState<InvitationFormValues[]>([]);
 
-    const {loading, error, value} = useFetch<InvitationsQueryType>(
+    const {loading, error, value} = useFetch<{data:InvitationsQueryType}>(
         `/api/invitations`,
         {},
         []
@@ -45,11 +45,11 @@ const AdminView: React.FC = () => {
 
     useEffect(() => {
         console.log(value)
-        if (error || !user || loading) {
+        if (error || !user || loading || !value) {
             setInvitations([]);
         } else if (value) {
             try {
-                setInvitations(value); // Parse the actual data
+                setInvitations(value.data); // Parse the actual data
                 console.log("Invitations:", value);
             } catch (error) {
                 // Handle Zod parsing errors
@@ -101,7 +101,8 @@ const AdminView: React.FC = () => {
     useEffect(() => {
         if (loading) return
         if (user?.id === null) return
-        if (invitations === null || invitations === undefined) return
+        if (invitations === null || invitations === undefined) return;
+        console.log("Invitations:", invitations);
         const message_ids = invitations.map(invitation => invitation.messages_sent.map(message => message?.id)).flat(2)
         const channel = supabase
             // .channel(`$user:${user?.id}:invitations:messages_sent`)

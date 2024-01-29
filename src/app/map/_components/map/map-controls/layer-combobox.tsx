@@ -26,8 +26,8 @@ const mapTypes = [
 
 export default function LayerCombobox({className}: { className?: string }) {
     const [open, setOpen] = React.useState(false);
-    const [mapTypeId, setMapTypeId] = React.useState("");
     const map = useMap();
+    const [mapTypeId, setMapTypeId] = React.useState(map?.getMapTypeId() || MapTypeId.ROADMAP);
 
     const handleSelectMapType = (typeId: string) => {
         setMapTypeId(typeId);

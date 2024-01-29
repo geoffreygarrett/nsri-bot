@@ -2,12 +2,17 @@ import React, {useCallback, useEffect, useMemo} from "react";
 import {PencilSquareIcon} from "@heroicons/react/24/solid";
 import {cn} from "@/lib/utils";
 import {Tables} from "@/types/supabase";
-import {AdvancedMarker, useAdvancedMarkerRef} from "@/app/map/_components/integrations/google-maps/draw/advanced-marker";
+import {
+    AdvancedMarker,
+    useAdvancedMarkerRef
+} from "@/app/map/_components/integrations/google-maps/draw/advanced-marker";
 import Pin from "@/app/map/_components/integrations/google-maps/draw/pin";
 import {isRescueBuoy} from "@/app/map/map";
 import {useTheme} from "next-themes";
 import {latToZIndex} from "@/app/map/util";
-import {useInfoWindowControlContext} from "@/app/map/_components/integrations/google-maps/draw/info-window/info-window-context";
+import {
+    useInfoWindowControlContext
+} from "@/app/map/_components/integrations/google-maps/draw/info-window/info-window-context";
 
 export const UnsynchronizedChangesIcon: React.FC<{ className?: string }> = ({className}) => {
     return <PencilSquareIcon ///ExclamationCircleIcon
@@ -134,13 +139,7 @@ export const _AdvancedMarkerWithHooks = <K extends Tables<'rescue_buoys'> | Tabl
         if (!marker) return;
         if (typeof InfoWindowContent === "function") {
             if (setContent) {
-                // if (open) {
-                    setContent(<InfoWindowContent item={item as K} data={memoizedData}
-                                                    marker={marker}/>);
-
-                    // openInfoWindow(<InfoWindowContent item={item as K} data={memoizedData}
-                    //                                   marker={marker}/>, marker, item.id);
-                // }
+                setContent(<InfoWindowContent item={item as K} data={memoizedData} marker={marker}/>);
             }
         }
     }, [marker, InfoWindowContent, openInfoWindow, item, memoizedData, open, setContent]);
