@@ -119,8 +119,8 @@ export function RescueBuoyForm({buoy, onClose, className}: { buoy: any, onClose:
                 updated_at: new Date().toISOString(),
             };
 
-            const data = getChangedFields(buoy, updatedBuoy);
-            dispatch(updateItemAction('rescue_buoys', {data, column: 'id', value: buoy.id}, SOURCE.CLIENT));
+            // const data = getChangedFields(buoy, updatedBuoy);
+            dispatch(updateItemAction('rescue_buoys', {data: updatedBuoy, column: 'id', value: buoy.id}, SOURCE.CLIENT));
             toast.success('Buoy updated successfully');
         } catch (error) {
             if (error instanceof Error) {

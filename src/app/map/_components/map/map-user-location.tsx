@@ -1,68 +1,61 @@
+import React, {useContext, useEffect, useMemo} from "react";
 import {AdvancedMarker, useMap} from "@vis.gl/react-google-maps";
-import React, {useContext, useEffect} from "react";
-import {useGeolocation} from "@uidotdev/usehooks";
+import useGeolocation from "@/hooks/use-geolocation";
 import {actionTypes, AppContext} from "@/app/app";
+
+// Type for location data
+type LocationData = {
+    latitude: number;
+    longitude: number;
+    accuracy?: number;
+    isUser?: boolean; // Flag to identify if it's the user's location
+};
 
 function UserErrorCircle({userLocation, userLocationError, map}: {
     userLocation: google.maps.LatLngLiteral,
     userLocationError: number,
     map: google.maps.Map | null
 }) {
-    useEffect(() => {
-        if (!map || !userLocation) return;
+    const circleRef = React.useRef<google.maps.Circle | null>(null);
 
-        const newCircle = new google.maps.Circle({
+    useEffect(() => {
+        circleRef.current = new google.maps.Circle({
             strokeColor: "#002aff",
             strokeOpacity: 0.8,
             strokeWeight: 2,
             fillColor: "#002AFFFF",
             fillOpacity: 0.1,
-            map: map,
             center: userLocation,
             radius: userLocationError
         });
+    }, []);
 
-        return () => newCircle.setMap(null);
-    }, [map, userLocation, userLocationError]);
+    useEffect(() => {
+        if (!circleRef.current) return;
+        circleRef.current.setCenter(userLocation);
+        circleRef.current.setRadius(userLocationError);
+    }, [userLocation, userLocationError]);
+
+    useEffect(() => {
+        if (!map || !userLocation || !circleRef.current) return;
+        circleRef.current.setMap(map);
+        return () => {
+            circleRef.current && circleRef.current.setMap(null)
+        };
+    }, [map]);
 
     return null;
 }
 
 
-const MapUserLocation = () => {
+const MapUserLocation = ({geolocation}: { geolocation: GeolocationPosition }) => {
     const map = useMap();
-    const dispatch = useContext(AppContext).dispatch;
-    const geolocation = useGeolocation();
-    useEffect(() => {
-        if (geolocation.latitude && geolocation.longitude) {
-            dispatch({
-                type: actionTypes.SET_LOCATION, payload: {
-                    value: {
-                        coords: {
-                            latitude: geolocation.latitude,
-                            longitude: geolocation.longitude,
-                            accuracy: geolocation.accuracy,
-                            altitude: geolocation.altitude,
-                            altitudeAccuracy: geolocation.altitudeAccuracy,
-                            heading: geolocation.heading,
-                            speed: geolocation.speed
-                        },
-                        timestamp: geolocation.timestamp
-                    },
-                    loading: false,
-                    error: null
-                } as any
-            });
-        }
-    }, [geolocation, dispatch]);
-
-
     return (
         <>
-            {geolocation.latitude && geolocation.longitude && (
+            {geolocation.coords.latitude && geolocation.coords.longitude && (
                 <AdvancedMarker position={{
-                    lat: geolocation.latitude,
-                    lng: geolocation.longitude
+                    lat: geolocation.coords.latitude,
+                    lng: geolocation.coords.longitude
                 }}>
                     <div className="relative flex justify-center items-center w-full h-full translate-y-1/2">
                         {/* SVG Icon (front) */}
@@ -79,10 +72,10 @@ const MapUserLocation = () => {
                             className="h-5 w-5 bg-blue-700 rounded-full animate-pulse border border-blue-800 absolute"></div>
 
                         {/* Error Circle (behind) - Adjust size based on error */}
-                        {geolocation.accuracy && (
+                        {geolocation.coords.accuracy && (
                             <UserErrorCircle
-                                userLocation={{lat: geolocation.latitude, lng: geolocation.longitude}}
-                                userLocationError={geolocation.accuracy}
+                                userLocation={{lat: geolocation.coords.latitude, lng: geolocation.coords.longitude}}
+                                userLocationError={geolocation.coords.accuracy}
                                 map={map}
                             />
                         )}

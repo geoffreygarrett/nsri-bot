@@ -162,6 +162,7 @@ import {
     updateItemAction
 } from "@/store/table-reducer";
 import {useSupabaseClient} from "@supabase/auth-helpers-react";
+import useSupabasePresence from "@/hooks/use-supabase-presence";
 
 
 // Adjust the signature of useAuthorizedCallback to accept a function for roles and permissions
@@ -514,7 +515,7 @@ const SimpleMap = ({serverData}: {
         return 'Unknown';
     };
 
-    const network = useNetworkState();
+    // const network = useNetworkState();
 
     const buttonsConfig: (editState: EditState, setEditState: React.Dispatch<React.SetStateAction<EditState>>) => EditNavButton[] = (editState, setEditState) => [
         // Define your buttons here
@@ -659,6 +660,45 @@ const SimpleMap = ({serverData}: {
             htmlElement.classList.remove('hp');
         }
     }, [state.settings.toggles.enable_performance_mode]);
+
+
+    const {presenceData, updatePresenceState} = useSupabasePresence({
+        roomName: 'map-room', supabase
+    });
+
+    // updatePresenceState({
+    //     user: 'user-1',
+    //     online_at: new Date().toISOString(),
+    // })
+
+    useEffect(() => {
+        console.log('presenceData', presenceData);
+        if (!state.settings.toggles.enable_location.enabled
+            || !state.geolocation.data
+            || !state.geolocation.data.coords.longitude
+            || !state.geolocation.data.coords.latitude
+        ) return;
+        // updatePresenceState({
+        //     user: 'user-1',
+        //     online_at: new Date().toISOString(),
+        // })
+        console.log('state.geolocation.data', state.geolocation.data);
+        updatePresenceState({
+            ...presenceData,
+            location: {
+                type: 'Point',
+                timestamp: new Date().toISOString(),
+                geolocation: {
+                    coords: {
+                        longitude: state.geolocation.data.coords.longitude,
+                        latitude: state.geolocation.data.coords.latitude,
+                        accuracy: state.geolocation.data.coords.accuracy,
+                    },
+                    timestamp: state.geolocation.data.timestamp}
+            }
+        }).then();
+
+    }, [state.settings.toggles.enable_location.enabled, state.geolocation.data, state.geolocation.data?.coords.longitude, state.geolocation.data?.coords.latitude]);
 
     return (
         <>
@@ -808,12 +848,23 @@ const SimpleMap = ({serverData}: {
                 <UserLocation className="mr-2 mb-2 border border-gray-400 dark:border-gray-600"/>
             </MapControl>
 
-            {/* User location */
-            }
-            {state.settings.toggles.enable_location.enabled && (
-                <MapUserLocation/>
-            )
-            }
+            {/* User location */}
+            {state.settings.toggles.enable_location.enabled
+                && state.geolocation.data
+                && !state.geolocation.error
+                && !state.geolocation.loading
+                && (<MapUserLocation geolocation={state.geolocation.data}/>)}
+
+            {/* Presence */}
+            {presenceData && Object.entries(presenceData).map(([key, presence]: [string, any]) => {
+                console.log('presence', presence[0]);
+                if (presence[0].location.geolocation && presence[0].location.geolocation.coords && presence[0].location.geolocation.coords.longitude && presence[0].location.geolocation.coords.latitude) {
+                    return (
+                        <MapUserLocation key={key} geolocation={presence[0].location.geolocation}/>
+                    );
+                }
+                return null;
+            })}
 
             <MapControl position={ControlPosition.RIGHT_BOTTOM}>
                 <Popover>

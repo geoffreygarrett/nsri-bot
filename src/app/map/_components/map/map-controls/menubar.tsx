@@ -191,25 +191,25 @@ export function MapMenubar({className, exportKml, exportCsv, sync}: {
         return (
             <MenubarMenu>
                 <MenubarTrigger>Edit</MenubarTrigger>
-                <MenubarContent>
-                    <MenubarItem disabled>
-                        Undo <MenubarShortcut>⌘Z</MenubarShortcut>
-                    </MenubarItem>
-                    <MenubarItem disabled>
-                        Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
-                    </MenubarItem>
-                    <MenubarSeparator/>
-                    <MenubarCheckboxItem>Edit Mode<MenubarShortcut>⌘E</MenubarShortcut>
-                    </MenubarCheckboxItem>
-                    <MenubarSeparator/>
-                    <MenubarItem
-                        onClick={handleDeleteCache}
-                        className="text-red-500 hover:bg-red-500 hover:text-white focus:bg-red-500 focus:text-white rounded-sm"
-                        >Delete Cache</MenubarItem>
-                    {/*<MenubarItem>Cut</MenubarItem>*/}
-                    {/*<MenubarItem>Copy</MenubarItem>*/}
-                    {/*<MenubarItem>Paste</MenubarItem>*/}
-                </MenubarContent>
+                {/*<MenubarContent>*/}
+                {/*    <MenubarItem disabled>*/}
+                {/*        Undo <MenubarShortcut>⌘Z</MenubarShortcut>*/}
+                {/*    </MenubarItem>*/}
+                {/*    <MenubarItem disabled>*/}
+                {/*        Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>*/}
+                {/*    </MenubarItem>*/}
+                {/*    <MenubarSeparator/>*/}
+                {/*    <MenubarCheckboxItem>Edit Mode<MenubarShortcut>⌘E</MenubarShortcut>*/}
+                {/*    </MenubarCheckboxItem>*/}
+                {/*    <MenubarSeparator/>*/}
+                {/*    <MenubarItem*/}
+                {/*        // onClick={handleDeleteCache}*/}
+                {/*        className="text-red-500 hover:bg-red-500 hover:text-white focus:bg-red-500 focus:text-white rounded-sm"*/}
+                {/*        >Delete Cache</MenubarItem>*/}
+                {/*    /!*<MenubarItem>Cut</MenubarItem>*!/*/}
+                {/*    /!*<MenubarItem>Copy</MenubarItem>*!/*/}
+                {/*    /!*<MenubarItem>Paste</MenubarItem>*!/*/}
+                {/*</MenubarContent>*/}
             </MenubarMenu>
         )
     }
@@ -262,7 +262,29 @@ export function MapMenubar({className, exportKml, exportCsv, sync}: {
                     </MenubarItem>
                 </MenubarContent>
             </MenubarMenu>
-           <EditMenu/>
+            <MenubarMenu>
+                <MenubarTrigger>Edit</MenubarTrigger>
+                <MenubarContent>
+                    <MenubarItem disabled>
+                        Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+                    </MenubarItem>
+                    <MenubarItem disabled>
+                        Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
+                    </MenubarItem>
+                    <MenubarSeparator/>
+                    <MenubarCheckboxItem>Edit Mode<MenubarShortcut>⌘E</MenubarShortcut>
+                    </MenubarCheckboxItem>
+                    <MenubarSeparator/>
+                    <MenubarItem
+                        // onClick={handleDeleteCache}
+                        className="text-red-500 hover:bg-red-500 hover:text-white focus:bg-red-500 focus:text-white rounded-sm"
+                        >Delete Cache</MenubarItem>
+                    {/*<MenubarItem>Cut</MenubarItem>*/}
+                    {/*<MenubarItem>Copy</MenubarItem>*/}
+                    {/*<MenubarItem>Paste</MenubarItem>*/}
+                </MenubarContent>
+            </MenubarMenu>
+
             <MenubarMenu>
                 <MenubarTrigger>View</MenubarTrigger>
                 <MenubarContent>

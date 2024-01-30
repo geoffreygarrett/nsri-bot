@@ -15,15 +15,15 @@ const RecenterControl = ({className}: { className?: string }) => {
 
     const handleClick = () => {
         if (!map) return;
-        if (state.location.loading) {
+        if (state.geolocation.loading) {
             toast.info("Location is loading...");  // Inform the user that location is loading
             return;
         }
-        if (state.location.error) {
-            toast.error(`Error: ${state.location.error}`);  // Show error message if any
+        if (state.geolocation.error) {
+            toast.error(`Error: ${state.geolocation.error}`);  // Show error message if any
             return;
         }
-        if (!state.location.value) {
+        if (!state.geolocation.data) {
             toast.info("Enable location services to use this feature"); // Prompt to enable location
             return;
         }
@@ -31,8 +31,8 @@ const RecenterControl = ({className}: { className?: string }) => {
         // If all is good, recenter the map to the user's location
         map.setZoom(15);
         map.panTo({
-            lat: state.location.value.coords.latitude,
-            lng: state.location.value.coords.longitude
+            lat: state.geolocation.data.coords.latitude,
+            lng: state.geolocation.data.coords.longitude
         });
     };
 

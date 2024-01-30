@@ -21,7 +21,7 @@ export const actionTypes = {
     SET_LOADING: 'SET_LOADING',
     SET_REALTIME_STATE: 'SET_REALTIME_STATE',
     SET_REALTIME_LOADING: 'SET_REALTIME_LOADING',
-    SET_LOCATION: 'SET_LOCATION',
+    SET_GEOLOCATION: 'SET_GEOLOCATION',
     SET_INFO_WINDOW: 'SET_INFO_WINDOW',
 
     NEW_POSITION_LINE: 'NEW_POSITION_LINE',
@@ -45,11 +45,11 @@ export type MapState = {
         item: Tables<'rescue_buoys'> | Tables<'nsri_stations'> | null
         draggable: boolean
     }
-    location: {
-        value: GeolocationPosition | null,
+    geolocation: {
+        data: GeolocationPosition | null,
         loading: boolean,
         error: GeolocationPositionError | null
-    },
+    }
     settings: {
         location: { enableHighAccuracy: boolean, watchPosition: boolean, timeout: number },
         map: { center: { lat: number, lng: number }, zoom: number },
@@ -78,8 +78,8 @@ interface SetLoadingAction {
 }
 
 interface SetLocationAction {
-    type: typeof actionTypes.SET_LOCATION;
-    payload: MapState['location'];
+    type: typeof actionTypes.SET_GEOLOCATION;
+    payload: MapState['geolocation'];
 }
 
 interface SetInfoWindowAction {
@@ -158,12 +158,12 @@ const reducer = (state: MapState, action: MapAction): MapState => {
             };
 
 
-        case actionTypes.SET_LOCATION:
+        case actionTypes.SET_GEOLOCATION:
             // Ensure that action is of SetLocationAction type
             const setLocationAction = action as SetLocationAction;
 
             // Set location state
-            return {...state, location: {...state.location, ...setLocationAction.payload}};
+            return {...state, geolocation: setLocationAction.payload};
 
         default:
             return state;
@@ -179,8 +179,8 @@ const initialState: MapState = {
         item: null,
         draggable: false
     },
-    location: {
-        value: null,
+    geolocation: {
+        data: null,
         loading: false,
         error: null
     },
@@ -218,7 +218,8 @@ import tableReducer, {
     useRealtimeChanges,
 } from "@/store/table-reducer";
 
-import {useGeolocation, useLocalStorage} from "@uidotdev/usehooks";
+import {useLocalStorage} from "@uidotdev/usehooks";
+import useGeolocation from "@/hooks/use-geolocation";
 import {useSupabaseClient} from "@supabase/auth-helpers-react";
 import {Database, Tables} from "@/types/supabase";
 import {Algorithm, AlgorithmOptions} from "@googlemaps/markerclusterer";
@@ -312,6 +313,18 @@ export const AppProvider = ({children}: { children: React.ReactNode }) => {
         channelName: `custom-${NSRI_STATIONS}-channel`,
         timeout: 10000,
     });
+
+    const {data, error, loading} = useGeolocation(
+        state.settings.location,
+        state.settings.toggles.enable_location.enabled
+    );
+
+    useEffect(() => {
+        dispatch({
+            type: actionTypes.SET_GEOLOCATION,
+            payload: {data, loading, error}
+        });
+    }, [data, error, loading]);
 
     return (
         <AppContext.Provider value={{state, dispatch}}>
