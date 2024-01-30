@@ -8,34 +8,15 @@ export const rescueBuoyRLS = async (prisma: PrismaClient) => {
     `);
 
     await prisma.$executeRaw(Prisma.sql`
-        CREATE POLICY "Anyone can view the rescue buoys" ON "public"."rescue_buoys"
-        AS PERMISSIVE FOR SELECT
-        TO public
-        USING ( true );
-    `);
-
-    await prisma.$executeRaw(Prisma.sql`
-        CREATE OR REPLACE FUNCTION is_nsri_super_admin(_user_id UUID) RETURNS BOOLEAN AS $$
+        CREATE OR REPLACE FUNCTION raise_permission_denied(detail TEXT) RETURNS void AS $$
         BEGIN
-          RETURN EXISTS (
-            SELECT 1
-            FROM roleships
-            JOIN roles ON roleships.role_id = roles.id
-            WHERE roleships.user_id = _user_id
-            AND roles.name = 'super-admin'
-          );
+          RAISE EXCEPTION 'Permission Denied: %', detail;
         END;
         $$ LANGUAGE plpgsql;
     `);
 
     await prisma.$executeRaw(Prisma.sql`
-        CREATE POLICY "Super Admin can update all rescue buoys" ON "public"."rescue_buoys" 
-        AS PERMISSIVE FOR ALL
-        TO public 
-        USING (is_nsri_super_admin(auth.uid()));
-    `);
-
-    await prisma.$executeRaw(Prisma.sql`
+         -- Function to check if a user is a station admin for a specific station
         CREATE OR REPLACE FUNCTION is_nsri_station_admin(_user_id UUID, _station_id INT) RETURNS BOOLEAN AS $$
         BEGIN
           RETURN EXISTS (
@@ -51,11 +32,68 @@ export const rescueBuoyRLS = async (prisma: PrismaClient) => {
     `);
 
     await prisma.$executeRaw(Prisma.sql`
+        -- Function to check if a user is a super admin
+        CREATE OR REPLACE FUNCTION is_nsri_super_admin(_user_id UUID) RETURNS BOOLEAN AS $$
+        BEGIN
+          RETURN EXISTS (
+            SELECT 1
+            FROM roleships
+            JOIN roles ON roleships.role_id = roles.id
+            WHERE roleships.user_id = _user_id
+            AND roles.name = 'super-admin'
+          );
+        END;
+        $$ LANGUAGE plpgsql;
+    `);
+
+    await prisma.$executeRaw(Prisma.sql`
+        CREATE OR REPLACE FUNCTION can_update_rescue_buoys(_user_id UUID, _station_id INT) RETURNS BOOLEAN AS $$
+        BEGIN
+          RETURN is_nsri_super_admin(_user_id)
+              OR is_nsri_station_admin(_user_id, _station_id);
+        END;
+        $$ LANGUAGE plpgsql;
+    `);
+
+    await prisma.$executeRaw(Prisma.sql`
+        CREATE OR REPLACE FUNCTION can_insert_rescue_buoys(_user_id UUID, _station_id INT) RETURNS BOOLEAN AS $$
+        BEGIN
+          RETURN is_nsri_super_admin(_user_id)
+              OR is_nsri_station_admin(_user_id, _station_id);
+        END;
+        $$ LANGUAGE plpgsql;
+    `);
+
+    await prisma.$executeRaw(Prisma.sql`
+        CREATE OR REPLACE FUNCTION can_delete_rescue_buoys(_user_id UUID, _station_id INT) RETURNS BOOLEAN AS $$
+        BEGIN
+          RETURN is_nsri_super_admin(_user_id);
+        END;
+        $$ LANGUAGE plpgsql;
+    `);
+
+    await prisma.$executeRaw(Prisma.sql`
+        CREATE POLICY "Anyone can view the rescue buoys" ON "public"."rescue_buoys"
+        AS PERMISSIVE FOR SELECT
+        TO public
+        USING ( true );
+    `);
+
+    await prisma.$executeRaw(Prisma.sql`
+        CREATE POLICY "Super Admin can update all rescue buoys" 
+        ON "public"."rescue_buoys" 
+        AS PERMISSIVE FOR ALL
+        TO public 
+        USING ( is_nsri_super_admin(auth.uid()) );
+    `);
+
+
+    await prisma.$executeRaw(Prisma.sql`
         CREATE POLICY "Station Admins can update rescue buoys for their station" 
         ON "public"."rescue_buoys"
         AS PERMISSIVE FOR UPDATE
         TO public
-        USING (is_nsri_station_admin(auth.uid(), station_id));
+        USING ( is_nsri_station_admin(auth.uid(), station_id) );
     `);
 
     await prisma.$executeRaw(Prisma.sql`
@@ -63,7 +101,7 @@ export const rescueBuoyRLS = async (prisma: PrismaClient) => {
         ON "public"."rescue_buoys"
         AS PERMISSIVE FOR INSERT
         TO public
-        WITH CHECK (is_nsri_station_admin(auth.uid(), station_id));
+        WITH CHECK ( is_nsri_station_admin(auth.uid(), station_id );
     `);
 
     // Apply the policies

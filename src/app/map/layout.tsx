@@ -24,11 +24,18 @@ const LIGHT_VECTOR_MAP_ID = '192722c95c08b0b5'
 
 
 const _MapContainer = ({children}: { children: React.ReactNode }) => {
-    const [mapState, setMapState] = useLocalStorage('nsri-map-state', {
+    // const [mapState, setMapState] = useLocalStorage('nsri-map-state', {
+    //     center: {lat: -30, lng: 25},
+    //     zoom: 6,
+    //     mapTypeId: 'roadmap',
+    // })
+
+    const [mapState, setMapState] = useState( {
         center: {lat: -30, lng: 25},
         zoom: 6,
         mapTypeId: 'roadmap',
     })
+
 
 
     const {resolvedTheme} = useTheme();

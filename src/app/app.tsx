@@ -8,7 +8,7 @@ const NSRI_STATIONS = 'nsri_stations';
 
 
 // Define your action types
-const actionTypes = {
+export const actionTypes = {
     SET_MARKERS: 'SET_MARKERS',
     SET_QUALITY: 'SET_QUALITY',
     TOGGLE_SHOW_BUOYS: 'TOGGLE_SHOW_BUOYS',
@@ -227,32 +227,32 @@ import {Algorithm, AlgorithmOptions} from "@googlemaps/markerclusterer";
 // Define a function to set up real-time updates
 export const AppProvider = ({children}: { children: React.ReactNode }) => {
     "use client";
-    const [localTables, setLocalTables] = useLocalStorage(TABLE_STATE_STORAGE_KEY, {
-        rescue_buoys: {
-            ...createInitialState('rescue_buoys').tables.rescue_buoys,
-            values: [], changes: [], realtime: {enabled: true}, filters: [
-                createFilter('rescue_buoys')('status', 'neq', 'UNKNOWN')
-            ]
-        },
-        nsri_stations: {
-            ...createInitialState('nsri_stations').tables.nsri_stations,
-            values: [], changes: [], realtime: {enabled: true}
-        }
-
-    });
+    // const [localTables, setLocalTables] = useLocalStorage(TABLE_STATE_STORAGE_KEY, {
+    //     rescue_buoys: {
+    //         ...createInitialState('rescue_buoys').tables.rescue_buoys,
+    //         values: [], changes: [], realtime: {enabled: true}, filters: [
+    //             createFilter('rescue_buoys')('status', 'neq', 'UNKNOWN')
+    //         ]
+    //     },
+    //     nsri_stations: {
+    //         ...createInitialState('nsri_stations').tables.nsri_stations,
+    //         values: [], changes: [], realtime: {enabled: true}
+    //     }
+    //
+    // });
 
     // const localStorageChanges = localStorage.getItem(TABLE_STATE_STORAGE_KEY);
     const supabase = useSupabaseClient<Database>();
 
     // Safely parse the local storage data
     const getInitialTables = () => {
-        if (localTables) {
-            try {
-                return {tables: localTables}
-            } catch (error) {
-                console.error('Error parsing local storage data:', error);
-            }
-        }
+        // if (localTables) {
+        //     try {
+        //         return {tables: localTables}
+        //     } catch (error) {
+        //         console.error('Error parsing local storage data:', error);
+        //     }
+        // }
         // Default initial state if local storage is empty, undefined, or in case of error
         return {
             tables: {
@@ -286,38 +286,14 @@ export const AppProvider = ({children}: { children: React.ReactNode }) => {
     const dispatch = useCallback(combineDispatch(mapDispatch, tableDispatch), [mapDispatch, tableDispatch]);
 
     // After reducer logic, save the changes to local storage
-    useEffect(() => {
-        if (state.tables) {
-            setLocalTables(state.tables);
-        }
-        // localStorage.setItem(TABLE_STATE_STORAGE_KEY, JSON.stringify(state.tables));
-        // setLocalTables(state.tables);
-    }, [setLocalTables, state.tables]);
+    // useEffect(() => {
+    //     if (state.tables) {
+    //         setLocalTables(state.tables);
+    //     }
+    //     // localStorage.setItem(TABLE_STATE_STORAGE_KEY, JSON.stringify(state.tables));
+    //     // setLocalTables(state.tables);
+    // }, [setLocalTables, state.tables]);
 
-
-    const geolocation = useGeolocation();
-    useEffect(() => {
-        if (geolocation.latitude && geolocation.longitude) {
-            dispatch({
-                type: actionTypes.SET_LOCATION, payload: {
-                    value: {
-                        coords: {
-                            latitude: geolocation.latitude,
-                            longitude: geolocation.longitude,
-                            accuracy: geolocation.accuracy,
-                            altitude: geolocation.altitude,
-                            altitudeAccuracy: geolocation.altitudeAccuracy,
-                            heading: geolocation.heading,
-                            speed: geolocation.speed
-                        },
-                        timestamp: geolocation.timestamp
-                    },
-                    loading: false,
-                    error: null
-                }
-            });
-        }
-    }, [geolocation, dispatch]);
 
     useRealtimeChanges({
         supabase,

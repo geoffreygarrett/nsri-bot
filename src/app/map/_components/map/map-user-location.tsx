@@ -1,5 +1,7 @@
 import {AdvancedMarker, useMap} from "@vis.gl/react-google-maps";
-import React, {useEffect} from "react";
+import React, {useContext, useEffect} from "react";
+import {useGeolocation} from "@uidotdev/usehooks";
+import {actionTypes, AppContext} from "@/app/app";
 
 function UserErrorCircle({userLocation, userLocationError, map}: {
     userLocation: google.maps.LatLngLiteral,
@@ -27,21 +29,41 @@ function UserErrorCircle({userLocation, userLocationError, map}: {
 }
 
 
-const MapUserLocation = ({userLocation}: { userLocation: GeolocationPosition | null }) => {
+const MapUserLocation = () => {
     const map = useMap();
+    const dispatch = useContext(AppContext).dispatch;
+    const geolocation = useGeolocation();
+    useEffect(() => {
+        if (geolocation.latitude && geolocation.longitude) {
+            dispatch({
+                type: actionTypes.SET_LOCATION, payload: {
+                    value: {
+                        coords: {
+                            latitude: geolocation.latitude,
+                            longitude: geolocation.longitude,
+                            accuracy: geolocation.accuracy,
+                            altitude: geolocation.altitude,
+                            altitudeAccuracy: geolocation.altitudeAccuracy,
+                            heading: geolocation.heading,
+                            speed: geolocation.speed
+                        },
+                        timestamp: geolocation.timestamp
+                    },
+                    loading: false,
+                    error: null
+                } as any
+            });
+        }
+    }, [geolocation, dispatch]);
 
-    // Convert user location to LatLngLiteral
-    const location = userLocation ? {
-        lat: userLocation.coords.latitude,
-        lng: userLocation.coords.longitude
-    } : null;
-
-    const locationError = userLocation ? userLocation.coords.accuracy : null;
 
     return (
         <>
-            {location && (
-                <AdvancedMarker position={location}>
+            {geolocation.latitude && geolocation.longitude && (
+                <AdvancedMarker position={{
+                    lat: geolocation.latitude,
+                    lng: geolocation.longitude
+                }}>
                     <div className="relative flex justify-center items-center w-full h-full translate-y-1/2">
                         {/* SVG Icon (front) */}
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"
@@ -57,10 +79,10 @@ const MapUserLocation = ({userLocation}: { userLocation: GeolocationPosition | n
                             className="h-5 w-5 bg-blue-700 rounded-full animate-pulse border border-blue-800 absolute"></div>
 
                         {/* Error Circle (behind) - Adjust size based on error */}
-                        {locationError && (
+                        {geolocation.accuracy && (
                             <UserErrorCircle
-                                userLocation={location}
-                                userLocationError={locationError}
+                                userLocation={{lat: geolocation.latitude, lng: geolocation.longitude}}
+                                userLocationError={geolocation.accuracy}
                                 map={map}
                             />
                         )}

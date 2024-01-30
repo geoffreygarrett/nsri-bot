@@ -810,7 +810,10 @@ const SimpleMap = ({serverData}: {
 
             {/* User location */
             }
-            <MapUserLocation userLocation={state.location.value}/>
+            {state.settings.toggles.enable_location.enabled && (
+                <MapUserLocation/>
+            )
+            }
 
             <MapControl position={ControlPosition.RIGHT_BOTTOM}>
                 <Popover>

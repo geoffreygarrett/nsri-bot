@@ -17,6 +17,7 @@ export function ImageDialog({ item }: { item: Tables<'rescue_buoys'> }) {
                                 <Image
                                     src={item.image_url}
                                     alt="Buoy"
+                                    priority={true}
                                     layout="fill"
                                     objectFit="cover"
                                     objectPosition="center"
